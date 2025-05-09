@@ -31,8 +31,7 @@ TheGame-0.0.1/
 ### Prerequisites
 - **Git Bash**: Install Git Bash from [Git Downloads](https://git-scm.com/downloads).
 - **UV Environment**: Install UV using one of the following methods:
-   - Recommended: `winget install --id=astral-sh.uv -e`
-   - Alternative: Follow the [UV Installation Guide](https://docs.astral.sh/uv/getting-started/installation).
+   - Recommended: Follow the [UV Installation Guide](https://docs.astral.sh/uv/getting-started/installation).
 
 ### Installation
 1. Download the latest release from [The Game Releases](https://github.com/astral-sh/TheGame/releases).
