@@ -2,3 +2,5 @@ Flask
 numpy
 pandas
 random2
+flake8
+pytest
