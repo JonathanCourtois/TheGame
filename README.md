@@ -34,7 +34,7 @@ TheGame-0.0.1/
    - Recommended: Follow the [UV Installation Guide](https://docs.astral.sh/uv/getting-started/installation).
 
 ### Installation
-1. Download the latest release from [The Game Releases](https://github.com/astral-sh/TheGame/releases).
+1. Download the latest release from [The Game Releases](https://github.com/JonathanCourtois/TheGame/releases).
 2. Unzip the downloaded file into a folder of your choice.
 3. Open a Git Bash terminal in the folder where you unzipped the file (right-click and select "Git Bash Here").
 4. Initialize the UV environment:
