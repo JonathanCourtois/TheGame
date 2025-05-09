@@ -39,7 +39,7 @@ def main():
 
     # Start the game loop (placeholder for now)
     while True:
-        action = input("\nWhat would you like to do? (s: stats, i: inventory, e: explore, rg: random character, rename: rename character, exit: exit) ")
+        action = input("\nWhat would you like to do? (s: stats, i: inventory, e: explore, rename: rename character, exit: exit) ")
         print("")
         if action.lower() == 'exit':
             with open("save/character_save.txt", "w") as f:
