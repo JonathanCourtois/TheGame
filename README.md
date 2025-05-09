@@ -1,58 +1,66 @@
 # The Game
 
 ## Overview
-The Game is a character-based adventure game where players can generate unique characters with varying statistics based on rarity classes. Players can manage their characters' inventory and equipment as they embark on their journey.
+The Game is a character-based adventure game where players can generate unique characters with varying statistics based on rarity classes. Players can manage their characters' inventory and equipment as they embark on their journey in a roguelike experience.
 
 ## Features
-- Random character generation with statistics: strength, speed, and life.
-- Rarity classes: S, A, B, C, and D, each affecting character stats.
-- Inventory management with multiple slots for items.
-- Equipment system with various slots for different gear.
+- **Random Character Generation**: Characters are created with unique stats like strength, speed, and life.
+- **Rarity Classes**: Characters belong to rarity classes (S, A, B, C, D) that influence their stats.
+- **Inventory Management**: Manage items across multiple inventory slots.
+- **Equipment System**: Equip characters with gear across various slots.
+- **Roguelike Gameplay**: Characters are deleted upon death, encouraging replayability with new characters.
 
 ## Project Structure
 ```
 TheGame-0.0.1/
 ├── src/
-│   ├── main.py
-│   ├── character.py
-│   ├── inventory.py
-│   ├── equipment.py
-│   ├── rarity.py
-│   ├── game.py
-│   └── utils.py
-├── play.py
-├── requirements.txt
-├── README.md
+│   ├── main.py          # Entry point for the game
+│   ├── character.py     # Character generation and management
+│   ├── inventory.py     # Inventory system
+│   ├── equipment.py     # Equipment management
+│   ├── rarity.py        # Rarity class definitions
+│   ├── game.py          # Core game logic
+│   └── utils.py         # Utility functions
+├── play.py              # Script to start the game
+├── requirements.txt     # Python dependencies
+├── README.md            # Project documentation
 ```
 
-## Setup Instructions
-### Requirements:
-- Bash command line:
-  1. Install Git Bash from: [Download Git](https://git-scm.com/downloads)
-- UV environment:
-  2. Install UV:
-     - Recommended: `winget install --id=astral-sh.uv -e`
-     - Alternative: [UV Installation Guide](https://docs.astral.sh/uv/getting-started/installation/)
-  3. Download the latest release (Zip for Windows or tar.gz for Linux) from: [The Game Releases](https://github.com/astral-sh/TheGame/releases)
-  4. Unzip the file into a folder of your choice.
-  5. Open a Git Bash terminal in the folder where you unzipped the file (right-click and select "Git Bash Here").
-  6. Initialize the UV environment with the command:
-```bash
-uv sync
-```
-  7. Run the game with the command:
-```bash
-uv run play.py
-```
+## Getting Started
 
+### Prerequisites
+- **Git Bash**: Install Git Bash from [Git Downloads](https://git-scm.com/downloads).
+- **UV Environment**: Install UV using one of the following methods:
+   - Recommended: `winget install --id=astral-sh.uv -e`
+   - Alternative: Follow the [UV Installation Guide](https://docs.astral.sh/uv/getting-started/installation).
+
+### Installation
+1. Download the latest release from [The Game Releases](https://github.com/astral-sh/TheGame/releases).
+2. Unzip the downloaded file into a folder of your choice.
+3. Open a Git Bash terminal in the folder where you unzipped the file (right-click and select "Git Bash Here").
+4. Initialize the UV environment:
+    ```bash
+    uv sync
+    ```
+5. Run the game:
+    ```bash
+    uv run play.py
+    ```
 
 ## Gameplay
-- Upon starting the game, a random character will be generated.
-- Players can view their character's stats and manage their inventory and equipment.
-- Explore the game world and engage in various adventures with your unique character.
-- Players can encounter various challenges, ranging from harmless to deadly.
-- The game deletes the character upon death.
-- As a roguelike game, players can restart with a new character after death.
+- Start the game to generate a random character with unique stats.
+- Manage your character's inventory and equipment.
+- Explore the game world and face various challenges, from harmless to deadly.
+- Characters are deleted upon death, but you can restart with a new character.
+- Enjoy the roguelike experience with endless replayability.
 
 ## Contributing
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements.
+Contributions are welcome! If you have suggestions or improvements, feel free to:
+- Submit a pull request.
+- Open an issue.
+
+## License
+This project is licensed under the [MIT License](LICENSE).
+
+## Contact
+For any questions or feedback, please open an issue on the [GitHub repository](https://github.com/astral-sh/TheGame).
