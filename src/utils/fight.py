@@ -14,7 +14,9 @@ def fight(character, monster):
     print(f"your cr is {character.cr} and the monster's cr is {monster.cr} the fight looks {fight_difficulty(character, monster)}\n")
     input("press enter to start the fight !")
 
-
+    open_inventory  = False
+    flee            = False
+    # Fight loop
     fighters = [character, monster]
     max_speed = max(fighter.speed for fighter in fighters)
     speed_counter = [0, 0]
@@ -23,9 +25,31 @@ def fight(character, monster):
             speed_counter[i] += fighter.speed
             if speed_counter[i] >= max_speed:
                 speed_counter[i] -= max_speed
-                hit, dammage = fighter.attack()
-                fighters[1-i].defend(hit, dammage)
-                input("\npress enter to continue next turn !\n")
+                if open_inventory:
+                    fighter.manage_inventory()
+                    open_inventory  = False
+                elif flee:
+                    print(f"{character.name} tried to flee!")
+                    # to flee, the character must succeed a d20 roll + speed facing the monster's d20 roll + speed
+                    flee_roll    = character.roll_d(20) + character.speed
+                    monster_roll = monster.roll_d(20) + monster.speed
+                    if flee_roll > monster_roll:
+                        print(f"{character.name} fled successfully!")
+                        return
+                    else:
+                        print(f"{character.name} failed to flee!")
+                else:
+                    hit, damage = fighter.attack()
+                    fighters[1-i].defend(hit, damage)
+                action = input("\npress i to open inventory, f to flee or any other key to continue!\n")
+
+                if action == "i":
+                    open_inventory = True
+                elif action == "f":
+                    flee = True
+                else:
+                    open_inventory  = False
+                    flee            = False
                 if fighters[1-i].life <= 0:
                     break
     

@@ -37,19 +37,32 @@ class Entity:
         Returns the name of the entity.
         """
         return self.name
-    
+    def roll_d(self, sides):
+        """
+        Roll a dice with a given number of sides.
+        Returns the result of the roll.
+        """
+        return random.randint(1, sides)
+
+    def roll_n_d(self, n, sides):
+        """
+        Roll n dice with a given number of sides.
+        Returns the result of the roll.
+        """
+        return sum(self.roll_d(sides) for _ in range(n))
+
     def attack(self):
         """
         Simulate an attack.
         Returns a tuple of hit and damage.
         """
-        dice    = random.randint(1, 20)
+        dice    = self.roll_d(20)
         hit     = dice + self.strength
         if dice == 20:
-            damage  = random.randint(1, 4) * 2 + self.strength 
+            damage  = self.roll_n_d(2, 4) + self.strength
             print(f"{self.displayed_name()} attacks with {ctxt('Crit!',Colors.RED)} Hit: {ctxt(f'{hit:2d}',Colors.YELLOW)}, Damage: {ctxt(f'{damage:2d}',Colors.YELLOW)}")
         else:
-            damage  = random.randint(1, 4) + self.strength
+            damage  = self.roll_d(4) + self.strength
             print(f"{self.displayed_name()} attacks with Hit: {ctxt(f'{hit:2d}',Colors.RED)}, Damage: {ctxt(f'{damage:2d}',Colors.RED)}")
         return hit, damage
     
@@ -58,7 +71,7 @@ class Entity:
         Simulate defending against an attack.
         If the hit is greater than the CA, reduce life by damage.
         """
-        if hit > self.ca+self.speed:
+        if hit > self.ca + self.speed:
             self.life -= damage
             if self.life < self.maxlife*0.2:
                 life_color = Colors.RED
