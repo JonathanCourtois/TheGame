@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-import sys
-import os
-# Add the project root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 import random
-from src.utils.display import ctxt, color_from_rarity, Colors
-from src.utils.random_generator import stat_modifier, random_rarity, Rarity
+import src.utils.random_generator as randgen
+import src.utils.display as dsp
 
 class Entity:
     def __init__(self):
         self.name = "Entity"
-        self.rarity         = Rarity.D
+        self.rarity         = randgen.Rarity.D
 
         self.constitution   = 1 # for defense
         self.strength       = 1 # for attack
@@ -20,7 +16,7 @@ class Entity:
         self.maxlife        = 10
 
         self.level          = 1
-        self.maxlevel       = 20  
+        self.maxlevel       = 25  
 
         self.cr             = self.calculate_cr()
         self.gold           = 0
@@ -31,15 +27,15 @@ class Entity:
         """
         Display the stats of the entity.
         """
-        stats = f"Name : {color_from_rarity(f'{self.name:>20s}', self.rarity)} : "
-        stats = f"{stats}Class {color_from_rarity(self.rarity.name, self.rarity)}\n"
+        stats = f"Name : {dsp.color_from_rarity(f'{self.name:>20s}', self.rarity)} : "
+        stats = f"{stats}Class {dsp.color_from_rarity(self.rarity.name, self.rarity)}\n"
         stats = f"{stats}Level {'-'*21} :{' '*3}{self.level:2d}\n"
         if cr:
             stats = f"{stats}CR {'-'*24} :{' '*2}{self.cr:3d}\n"
         if life:
-            stats = f"{stats}Life {'-'*22} :{' '*2}{ctxt(f'{self.life:3d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:3d}',Colors.GREEN)}\n"
+            stats = f"{stats}Life {'-'*22} :{' '*2}{dsp.ctxt(f'{self.life:3d}',dsp.Colors.GREEN)}/{dsp.ctxt(f'{self.maxlife:3d}',dsp.Colors.GREEN)}\n"
         if maxlife:
-            stats = f"{stats}Max Life {'-'*18} :{' '*2}{ctxt(f'{self.maxlife:3d}',Colors.GREEN)}\n"
+            stats = f"{stats}Max Life {'-'*18} :{' '*2}{dsp.ctxt(f'{self.maxlife:3d}',dsp.Colors.GREEN)}\n"
         if cst:
             stats = f"{stats}Constitution {'-'*14} :{' '*3}{self.constitution:2d}\n"
         if spd:
@@ -49,9 +45,9 @@ class Entity:
         if fcs:
             stats = f"{stats}Focus {'-'*21} :{' '*3}{self.focus:2d}\n"
         if gold:
-            stats = f"{stats}Gold {'-'*22} :{' '*1}{ctxt(f'{self.gold:4d}',Colors.YELLOW)}\n"
+            stats = f"{stats}Gold {'-'*22} :{' '*1}{dsp.ctxt(f'{self.gold:4d}',dsp.Colors.YELLOW)}\n"
         if xp:
-            stats = f"{stats}XP {'-'*24} :{' '*2}{ctxt(f'{self.xp:3d}',Colors.CYAN)}\n"
+            stats = f"{stats}XP {'-'*24} :{' '*2}{dsp.ctxt(f'{self.xp:3d}',dsp.Colors.CYAN)}\n"
         return stats
 
     def calculate_cr(self):
@@ -165,8 +161,8 @@ class Entity:
         Check the xp and set the level of the entity
         Give one credit to upgrade stats per level until max level.
         """
-        if self.xp >= (5*self.level)**2: # Level up condition
-            self.xp -=  (5*self.level)**2
+        if self.xp >= (4*self.level)**2: # Level up condition
+            self.xp -=  (4*self.level)**2
             if self.level >= self.maxlevel:
                 print(f"{self.displayed_name()} is already at max level!")
                 return

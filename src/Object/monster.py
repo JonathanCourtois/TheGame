@@ -1,5 +1,5 @@
 import random
-from src.Entity.Entity import Entity
+from src.Object.Entity import Entity
 from src.utils.display import ctxt, Colors
 
 class Monster(Entity):

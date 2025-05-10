@@ -1,4 +1,4 @@
-from src.Entity.Entity import Entity
+from src.Object.Entity import Entity
 import src.utils.rarity as Rarity
 
 class Item(Entity):

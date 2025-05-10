@@ -1,8 +1,5 @@
-import sys
-import os
-# Add the project root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from src.utils.random_generator import Rarity
+# -*- coding: utf-8 -*-
+import src.utils.random_generator as randgen
 
 class Colors:
     RESET = "\033[0m"
@@ -21,15 +18,15 @@ def ctxt(text:str, color:Colors):
     """
     return f"{color}"+text+f"{Colors.RESET}"
 
-def color_from_rarity(name:str, rarity:Rarity):
+def color_from_rarity(name:str, rarity:randgen.Rarity):
     """
     Returns a colored name based on the rarity.
     """
     color = {
-        Rarity.S: "\033[1;35m",  # Magenta
-        Rarity.B: "\033[1;34m",  # Blue
-        Rarity.C: "\033[1;32m",  # Green
-        Rarity.A: "\033[1;33m",  # Yellow
-        Rarity.D: "\033[1;31m",  # Red
+        randgen.Rarity.S: "\033[1;35m",  # Magenta
+        randgen.Rarity.B: "\033[1;34m",  # Blue
+        randgen.Rarity.C: "\033[1;32m",  # Green
+        randgen.Rarity.A: "\033[1;33m",  # Yellow
+        randgen.Rarity.D: "\033[1;31m",  # Red
     }
     return f"{color[rarity]}{name}\033[0m"

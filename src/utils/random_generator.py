@@ -1,45 +1,83 @@
+# -*- coding: utf-8 -*-
+import src.Object.Entity as Entity
 
 import random
+import math
 from enum import Enum
 
 class Rarity(Enum):
-    S = 1
-    A = 2
+    S = 5
+    A = 4
     B = 3
-    C = 4
-    D = 5
+    C = 2
+    D = 1
 
     @classmethod
     def get_probability(cls):
+        phi = (1+math.sqrt(5))/2
+        d   = 100/sum([1/phi**i for i in range(0, 5)])
+        c   = d/phi
+        b   = c/phi
+        a   = b/phi
+        s   = a/phi
         return {
-            cls.S: 0.05,
-            cls.A: 0.15,
-            cls.B: 0.30,
-            cls.C: 0.30,
-            cls.D: 0.20
+            cls.S: s,
+            cls.A: a,
+            cls.B: b,
+            cls.C: c,
+            cls.D: d
         }
 
     @classmethod
     def random_rarity(cls):
         probabilities = cls.get_probability()
         total = sum(probabilities.values())
-        rand = random.uniform(0, total)
+        rand  = random.uniform(0, total)
         cumulative = 0
         for rarity, probability in probabilities.items():
             cumulative += probability
             if rand < cumulative:
                 return rarity
-   
-rarity_probabilities = {
-        Rarity.S: 0.05,
-        Rarity.A: 0.15,
-        Rarity.B: 0.30,
-        Rarity.C: 0.30,
-        Rarity.D: 0.20,
-    }
+
+
+def random_rarity():
+    """
+    Returns a random rarity based on the defined probabilities.
+    """
+    rarity = random.choices(
+        list(Rarity.get_probability().keys()),
+        weights=list(Rarity.get_probability().values()),
+        k=1
+    )[0]
+    return rarity
+
+def generate_entity(entity, level:int = None, rarity:Rarity = None):
+    """
+    Generates a random entity with a random rarity and stats.
+    """
+    if rarity is None: # Set rarity to random value
+        entity.rarity = random_rarity()
+    else:
+        entity.rarity = rarity
+    # Add credits upgrade from rarity
+    rarity_credit = (entity.rarity.value-1)*5
+
+    if level is None: # Set level to random value
+        entity.level = random.randint(1, entity.maxlevel)
+    else:
+        entity.level = min(level, entity.maxlevel)
+    # Add credits upgrade from level
+    level_credit = entity.level-1
+
+    total_credit = rarity_credit + level_credit
+    # Upgrade stats
+    entity.upgrade_stats(credit=total_credit)
+    return entity
+
+
 
 def generate_character():
-    from src.Entity.character import Character
+    from src.Object.character import Character
 
     rarity = random_rarity()
 
@@ -51,30 +89,12 @@ def generate_character():
     character = Character(stats['strength'], stats['speed'], stats['life'], rarity)
     return character
 
-def random_rarity():
-    """
-    Returns a random rarity based on the defined probabilities.
-    """
-    rarity = random.choices(
-        list(rarity_probabilities.keys()),
-        weights=list(rarity_probabilities.values()),
-        k=1
-    )[0]
-    return rarity
-
 def stat_modifier(rarity):
     """
     Returns a tuple of stat modifiers based on the rarity.
     """
-    rarity_ID = {
-        Rarity.S: 5,
-        Rarity.A: 4,
-        Rarity.B: 3,
-        Rarity.C: 2,
-        Rarity.D: 1,
-    }
     stat_mod = 0
-    for i in range(0, rarity_ID[rarity]):
+    for i in range(0, rarity.value):
         stat_mod += random.randint(0, 1)
     return stat_mod
 

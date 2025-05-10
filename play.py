@@ -1,10 +1,9 @@
 import random
-from src.Entity.character import Character
+import src.Object.character as character
 import src.utils.random_generator as randgen
-from src.Entity.character import Monster
 import src.utils.fight as fight
-from src.utils.merchant import Merchant
-from src.utils.display import ctxt, Colors
+import src.utils.merchant as Merchant
+import src.utils.display as dsp
 import os
 
 

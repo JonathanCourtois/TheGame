@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
-import os
-# Add the project root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from src.utils.display import ctxt, Colors
-from src.utils.random_generator import stat_modifier, random_rarity, Rarity
-from src.Entity.Entity import Entity
+import src.utils.display as dsp
+import src.utils.random_generator as randgen
+import src.Object.Entity as Entity
  
 class Character(Entity):
     def __init__(self, strength, speed, life, rarity):
