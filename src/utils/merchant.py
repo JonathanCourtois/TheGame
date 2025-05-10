@@ -1,4 +1,4 @@
-from src.characters.character import Character, Item
+from src.Entity.character import Character, Item
 import src.utils.random_generator as randgen
 from src.utils.display import ctxt, Colors
 import random

@@ -5,11 +5,13 @@ __pycache__/
 *.pyc
 
 # Distribution / packaging
+.pytest_cache/
 .Python
 save/
 
 # dotenv
 .env
+.venv
 .env.*
 
 # virtualenv
