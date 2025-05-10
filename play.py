@@ -4,6 +4,7 @@ import src.utils.random_generator as randgen
 from src.characters.character import Monster
 import src.utils.fight as fight
 from src.utils.merchant import Merchant
+from src.utils.display import ctxt, Colors
 import os
 
 
@@ -66,7 +67,7 @@ def main():
                 fight.fight(character, monster)
             elif enconter_seed < 0.3:
                 gold = randgen.gold_chest()
-                print(f"You found {gold} gold!")
+                print(f"You found {ctxt(f'{gold}',Colors.YELLOW)} gold!")
                 character.gold += gold
 
             elif enconter_seed < 0.6:
@@ -80,6 +81,33 @@ def main():
             else:
                 monster = Monster.generate_random_monster_leveled(character)
                 fight.fight(character, monster)
+
+        elif action.lower() == 'level':
+            action = input("Enter the level you want to reach: ")
+            try:
+                level = int(action)
+                if level > 0:
+                    character.level = level
+                    print(f"Character leveled up to {level}!")
+                else:
+                    print("Level must be greater than 0.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+        elif action.lower() == 'gold': # debug
+            action = input("Enter the amount of gold you want to add: ")
+            try:
+                gold = int(action)
+                if gold > 0:
+                    character.gold += gold
+                    print(f"Added {gold} gold to character!")
+                else:
+                    print("Gold must be greater than 0.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")  
+        elif action.lower() == 'spawn item': # debug
+            item = randgen.generate_item()
+            character.add_to_inventory(item)
+            print(f"Spawned item: {item.displayed_name()}")
 
         elif action.lower() == 'rg': # debug
             character = randgen.generate_character()

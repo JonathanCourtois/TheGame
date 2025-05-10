@@ -1,11 +1,8 @@
 
 import random
 from src.characters.rarity import Rarity
-from src.characters.character import Character, Item
 
-def generate_character():
-
-    rarity_probabilities = {
+rarity_probabilities = {
         Rarity.S: 0.05,
         Rarity.A: 0.15,
         Rarity.B: 0.30,
@@ -13,21 +10,29 @@ def generate_character():
         Rarity.D: 0.20,
     }
 
+def generate_character():
+    from src.characters.character import Character
+
+    rarity = random_rarity()
+
+    stats = {
+        'strength': random.randint(0, 1)    + stat_modifier(rarity),
+        'speed':    random.randint(1, 2)    + stat_modifier(rarity),
+        'life':     random.randint(1, 10)   + stat_modifier(rarity),
+    }
+    character = Character(stats['strength'], stats['speed'], stats['life'], rarity)
+    return character
+
+def random_rarity():
+    """
+    Returns a random rarity based on the defined probabilities.
+    """
     rarity = random.choices(
         list(rarity_probabilities.keys()),
         weights=list(rarity_probabilities.values()),
         k=1
     )[0]
-
-    stats = {
-        'strength': random.randint(0, 1) + stat_modifier(rarity),
-        'speed': random.randint(1, 2) + stat_modifier(rarity),
-        'life': random.randint(1, 10) + stat_modifier(rarity),
-    }
-    stat_modifier(rarity)
-    character = Character(stats['strength'], stats['speed'], stats['life'], rarity)
-    return character
-
+    return rarity
 
 def stat_modifier(rarity):
     """
@@ -41,7 +46,7 @@ def stat_modifier(rarity):
         Rarity.D: 1,
     }
     stat_mod = 0
-    for i in range(0, rarity_ID[rarity] ):
+    for i in range(0, rarity_ID[rarity]):
         stat_mod += random.randint(0, 1)
     return stat_mod
 

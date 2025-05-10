@@ -1,6 +1,7 @@
 import src.characters.rarity as Rarity
 import random
 from src.utils.display import ctxt, Colors
+from src.utils.random_generator import stat_modifier, random_rarity
 
 class Entity:
     def __init__(self, strength, speed, life):
@@ -18,7 +19,7 @@ class Entity:
 
     def display_stats(self, stats=f"Name:\tEntity\n"):
         stats = f"{stats}CR:\t\t{self.cr:3d}\n"
-        stats = f"{stats}Life:\t\t{ctxt(f'{self.life:3d}',Colors.BLUE)}/{ctxt(f'{self.maxlife:3d}',Colors.BLUE)}\n"
+        stats = f"{stats}Life:\t{ctxt(f'{self.life:7d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:3d}',Colors.GREEN)}\n"
         stats = f"{stats}CA:\t\t {self.ca:2d}\n"
         stats = f"{stats}Speed:\t\t {self.speed:2d}\n"
         stats = f"{stats}Strength:\t {self.strength:2d}\n"
@@ -65,7 +66,7 @@ class Entity:
                 life_color = Colors.YELLOW
             else:
                 life_color = Colors.GREEN
-            print(f"{self.displayed_name()} takes {ctxt(f'{damage:2d}',Colors.RED)} damage! Life left: {ctxt(f'{self.life:3d}',life_color)}/{ctxt(f'{self.maxlife:3d}',Colors.BLUE)}")
+            print(f"{self.displayed_name()} takes {ctxt(f'{damage:2d}',Colors.RED)} damage! Life left: {ctxt(f'{self.life:3d}',life_color)}/{ctxt(f'{self.maxlife:3d}',Colors.GREEN)}")
         else:
             print(f"{self.displayed_name()} dodges the attack!\n")
 
@@ -77,7 +78,7 @@ class Entity:
         self.life += amount
         if self.life > self.maxlife:
             self.life = self.maxlife
-        print(f"{self.name} heals for {ctxt(f'{amount:2d}',Colors.GREEN)}! Life left: {ctxt(f'{self.life:3d}',Colors.BLUE)}/{self.maxlife:3d}")
+        print(f"{self.name} heals for {ctxt(f'{amount:2d}',Colors.GREEN)}! Life left: {ctxt(f'{self.life:3d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:3d}',Colors.GREEN)}")
 
     def rename(self, name):
         """
@@ -93,11 +94,11 @@ class Entity:
         """
         self.gold   += monster.gold
         self.xp     += monster.xp
-        print(f"{self.name} loots {monster.gold} gold and {monster.xp} XP from {monster.name}!")
+        print(f"{self.name} loots {ctxt(f'{monster.gold}',Colors.YELLOW)} gold and {ctxt(f'{monster.xp}',Colors.BLUE)} XP from {monster.name}!\n")
         if self.xp >= self.level * 10:
             self.xp -= self.level * 10
             self.level += 1
-            print(f"{self.name} leveled up and can upgrade 3 stats! New level: {self.level}")
+            print(f"{self.name} {ctxt('leveled up',Colors.MAGENTA)} and can upgrade 3 stats! New level: {ctxt(f'{self.level}',Colors.MAGENTA)}")
             self.upgrade_stats()
             self.heal(self.maxlife)
             self.cr = self.calculate_cr()
@@ -137,8 +138,8 @@ class Character(Entity):
         stats += f"Level:\t\t{self.level:3d}\n"
         stats += f"Rarity:\t\t  {self.rarity.name}\n"
         stats = super().display_stats(stats)
-        stats += f"Gold:\t\t{self.gold:3d}\n"
-        stats += f"XP:\t\t{self.xp:3d}/{self.level*10}\n"
+        stats += f"Gold:\t{ctxt(f'{self.gold:11d}',Colors.YELLOW)}\n"
+        stats += f"XP:\t{ctxt(f'{self.xp:7d}',Colors.BLUE)}/{ctxt(f'{self.level*10:3d}',Colors.BLUE)}\n"
         return stats
         
     def display_inventory(self):
@@ -430,84 +431,93 @@ class Item(Entity):
         """
         name = random.choice(list(item_stat_list.keys()))
         stats = item_stat_list[name]
-        strength    = random.randint(stats["strength"][0], stats["strength"][1])
-        speed       = random.randint(stats["speed"][0], stats["speed"][1])
-        life        = random.randint(stats["life"][0], stats["life"][1])
-        maxlife     = random.randint(stats["maxlife"][0], stats["maxlife"][1])
-        price       = random.randint(stats["price"][0], stats["price"][1])
-        level       = random.randint(stats["level"][0], stats["level"][1])
-        xp          = random.randint(stats["xp"][0], stats["xp"][1])
-        rarity      = stats["rarity"]
+        rarity      = random_rarity()
+        level       = random.randint(stats["level"][0],     stats["level"][1])
+        stat_bias   = (level+stat_modifier(rarity))
+
+        life        = random.randint(int(stats["life"][0]*stat_bias),
+                                     int(stats["life"][1]*stat_bias))
+
+        stat_bias   = (level+stat_modifier(rarity))
+        strength    = random.randint(int(stats["strength"][0]*stat_bias),  
+                                     int(stats["strength"][1]*stat_bias))
+        stat_bias   = (level+stat_modifier(rarity))
+        speed       = random.randint(int(stats["speed"][0]*stat_bias),     
+                                     int(stats["speed"][1]*stat_bias))
+        stat_bias   = (level+stat_modifier(rarity))
+        maxlife     = random.randint(int(stats["maxlife"][0]*stat_bias),   
+                                     int(stats["maxlife"][1]*stat_bias))
+
+        stat_bias   = (level+stat_modifier(rarity))
+        price       = random.randint(int(stats["price"][0]*stat_bias),     
+                                     int(stats["price"][1]*stat_bias))
+
+        xp          = random.randint(stats["xp"][0],        stats["xp"][1])
         # Check if the item is a chest
         if "chest" in name:
-            rarity = random.choices(
-                list(Rarity.Rarity.get_probability().keys()),
-                weights=list(Rarity.Rarity.get_probability().values()),
-                k=1
-            )[0]
             return Chest(name, strength, speed, life, maxlife, price, level, xp, rarity)
-        else:   
+        else:
             return Item(name, strength, speed, life, maxlife, price, level, xp, rarity)
-    
+
 item_stat_list = {
     "Healing Potion": {
         "strength": (0, 0),
-        "speed": (0, 0),
-        "life": (5, 10),
-        "maxlife": (0, 0),
-        "price": (5, 25),
-        "level": (1, 1),
-        "xp": (0, 0),
+        "speed":    (0, 0),
+        "life":     (1, 10),
+        "maxlife":  (0, 0),
+        "price":    (4, 25),
+        "level":    (1, 1),
+        "xp":       (0, 0),
         "rarity": Rarity.Rarity.D
     },
     "speed Potion": {
         "strength": (0, 0),
-        "speed": (1, 2),
-        "life": (0, 0),
-        "maxlife": (0, 0),
-        "price": (100, 200),
-        "level": (1, 3),
-        "xp": (0, 0),
+        "speed":    (0, 1),
+        "life":     (0, 0),
+        "maxlife":  (0, 0),
+        "price":    (100, 200),
+        "level":    (1, 5),
+        "xp":       (0, 0),
         "rarity": Rarity.Rarity.D
     },
     "strength Potion": {
-        "strength": (1, 2),
-        "speed": (0, 0),
-        "life": (0, 0),
-        "maxlife": (0, 0),
-        "price": (100, 200),
-        "level": (1, 3),
-        "xp": (0, 0),
+        "strength": (0, 1),
+        "speed":    (0, 0),
+        "life":     (0, 0),
+        "maxlife":  (0, 0),
+        "price":    (100, 200),
+        "level":    (1, 5),
+        "xp":       (0, 0),
         "rarity": Rarity.Rarity.D
     },
     "Life Potion": {
         "strength": (0, 0),
-        "speed": (0, 0),
-        "life": (0, 0),
-        "maxlife": (1, 2),
-        "price": (100, 200),
-        "level": (1, 3),
-        "xp": (0, 0),
+        "speed":    (0, 0),
+        "life":     (0, 0),
+        "maxlife":  (0, 1),
+        "price":    (100, 200),
+        "level":    (1, 5),
+        "xp":       (0, 0),
         "rarity": Rarity.Rarity.D
     },
     "Gold chest": {
         "strength": (0, 0),
-        "speed": (0, 0),
-        "life": (0, 0),
-        "maxlife": (0, 0),
-        "price": (100, 200),
-        "level": (1, 3),
-        "xp": (0, 0),
+        "speed":    (0, 0),
+        "life":     (0, 0),
+        "maxlife":  (0, 0),
+        "price":    (100, 200),
+        "level":    (1, 5),
+        "xp":       (0, 0),
         "rarity": Rarity.Rarity.D
     },
     "Xp chest": {
         "strength": (0, 0),
-        "speed": (0, 0),
-        "life": (0, 0),
-        "maxlife": (0, 0),
-        "price": (100, 200),
-        "level": (1, 3),
-        "xp": (0, 0),
+        "speed":    (0, 0),
+        "life":     (0, 0),
+        "maxlife":  (0, 0),
+        "price":    (100, 200),
+        "level":    (1, 5),
+        "xp":       (0, 0),
         "rarity": Rarity.Rarity.D
     },
 }
@@ -532,20 +542,20 @@ class Chest(Item):
         """
         ### gold chest
         if "Gold" in self.name:
-            rarity_factor = (5-self.rarity.value)*10
-            min = rarity_factor + self.level*10
-            max = rarity_factor*10 + self.level*100
+            stat_bias   = (self.level+stat_modifier(self.rarity))
+            min = 100*stat_bias
+            max = 200*stat_bias
             gold = random.randint(min, max)
-            print(f"\n{self.name} contains {gold} gold!")
+            print(f"\n{self.name} contains {ctxt(f'{gold}', Colors.YELLOW)} gold!")
             character.gold += gold
 
         ### xp chest
         elif "Xp" in self.name:
-            rarity_factor = (5-self.rarity.value)
-            min = rarity_factor + self.level
-            max = rarity_factor + self.level*10
+            stat_bias   = (self.level+stat_modifier(self.rarity))
+            min = 10*stat_bias
+            max = 20*stat_bias
             xp = random.randint(min, max)
-            print(f"\n{self.name} contains {xp} XP!")
+            print(f"\n{self.name} contains {ctxt(f'{xp}', Colors.BLUE)} XP!")
             character.xp += xp
         
 
