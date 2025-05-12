@@ -1,8 +1,8 @@
 import random
-import src.Object.character as character
+from src.Object.character import Character
 import src.utils.random_generator as randgen
 import src.utils.fight as fight
-import src.utils.merchant as Merchant
+# import src.utils.merchant as Merchant
 import src.utils.display as dsp
 import os
 
@@ -26,11 +26,11 @@ def main():
                 print(f"Character loaded: {character.name}")
             else:
                 # Generate a random character
-                character = randgen.generate_character()
+                character = Character().generate_character()
                 print(f"New character created: {character.name}")
     except FileNotFoundError:
         # Generate a random character
-        character = randgen.generate_character()
+        character = Character().generate_character()
         print(f"New character created: {character.name}")
 
     # Display character stats

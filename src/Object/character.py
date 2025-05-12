@@ -1,49 +1,94 @@
 # -*- coding: utf-8 -*-
-
-import src.utils.display as dsp
-import src.utils.random_generator as randgen
-import src.Object.Entity as Entity
+from ast import Raise
+import stat
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from src.utils.random_generator import random_rarity, Rarity
+from src.utils.display import color_from_rarity, ctxt, Colors
+from src.Object.Entity import Entity
  
 class Character(Entity):
-    def __init__(self, strength, speed, life, rarity):
-        super().__init__(strength, speed, life)
+    def __init__(self):
+        super().__init__()
         self.name = "Character"
-        self.rarity = rarity
         self.inventory = []
-        self.equipment = {}
+        self.equipment = {'head': None, 'body': None, 'legs': None, 'feet': None, 'left hand': None, 'right hand': None, 'neck': None, 'ring1': None, 'ring2': None, 'belt': None}
 
-    def display_stats(self, stats=""):
-        name = Rarity.color_name_from_rarity(self.name, self.rarity)
-        stats = f"Name:\t\t{name}\n"
-        stats += f"Level:\t\t{self.level:3d}\n"
-        stats += f"Rarity:\t\t  {self.rarity.name}\n"
-        stats = super().display_stats(stats)
-        stats += f"Gold:\t{ctxt(f'{self.gold:11d}',Colors.YELLOW)}\n"
-        stats += f"XP:\t{ctxt(f'{self.xp:7d}',Colors.BLUE)}/{ctxt(f'{self.level*10:3d}',Colors.BLUE)}\n"
+    def generate_character(self, level=1):
+        self.generate_entity(level=level)
+        return self
+
+    def display_stats(self, cr:bool=True, life:bool=True, cst:bool=True, spd:bool=True, strg:bool=True, fcs:bool=True,
+                      gold:bool=True, xp:bool=True, maxlife:bool=False):
+        stats = super().display_stats(cr=cr, life=life, cst=cst, spd=spd, strg=strg, fcs=fcs,gold=gold, xp=xp, maxlife=maxlife)
+        # ADD Inventory Display
+        stats += self.display_equipement(name_only=True)
+        stats += self.display_inventory(name_only=True)
         return stats
         
-    def display_inventory(self):
+    def display_inventory(self, name_only=False):
         """
         Display the character's inventory.
         """
-        print("Inventory:")
+        inv_str = "Inventory:\n"
         if len(self.inventory) == 0:
-            print("Inventory is empty.\n")
-            return
-        for i, item in enumerate(self.inventory):
-            print(f"ID : {i:2d}\n{item.display_stats()}")
+            inv_str = "Inventory is empty.\n"
+            return inv_str
+        if name_only:
+            for i, item in enumerate(self.inventory):
+                inv_str += f"ID : {i:2d} : {item.displayed_name():30} : lvl {item.level:2d} : {item.name}"
+            inv_str += "\n"
+        else:   
+            for i, item in enumerate(self.inventory):
+                 inv_str += f"ID : {i:2d}\n{item.display_stats()}"
+        return inv_str
+        
+    def display_equipement(self, name_only=False):
+        """
+        Display the character's equipement.
+        """
+        inv_str = "Equipement:\n"
+        if name_only:
+            for i, item in enumerate(self.equipment):
+                if self.equipment[item] is not None:
+                    raise NotImplementedError("Display equipement not implemented yet.")
+                else:
+                    inv_str += f"{item:^12s} : {'Empty':^16s} | "
+                    if item in ['feet', 'right hand', 'belt']:
+                        inv_str += "\n"
+        else:   
+            raise NotImplementedError("Display equipement not implemented yet.")
+        return inv_str
 
-    def display_inventory_name_only(self):
+    def display_character_sheet(self):
         """
-        Display the character's inventory with names only.
+        Display the character stats in a sheet format.
+        format:
+        # HEDER #
+        # Stat 0 | equipment 0 #
+        # Stat 1 | equipment 1 #
+        # ...
+        # Stat n | #
+        # Inventory #
         """
-        print("Inventory:")
-        if len(self.inventory) == 0:
-            print("Inventory is empty.\n")
-            return
-        for i, item in enumerate(self.inventory):
-            print(f"ID : {i:2d} : {item.displayed_name():30} : lvl {item.level:2d} : {item.rarity.name}")
-        print("")
+        # HEADER
+        sheet = f"# Name : {color_from_rarity(f'{self.name:^20s}', self.rarity)} :"
+        class_slot = f"Class {color_from_rarity(f'{self.rarity.name:1s}', self.rarity)}"
+        sheet += f"{class_slot:^21s}| #\n"
+
+        sheet = f"{sheet}# Level {'-'*21} :{self.level:^10d}:#\n"
+        sheet = f"{sheet}# CR {'-'*24} :{self.cr:^10d}:#\n"
+        sheet = f"{sheet}# Life {'-'*22} :{ctxt(f'{self.life:>5d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:<4d}',Colors.GREEN)}:#\n"
+
+
+
+
+
+
+        return sheet
+
+
 
 
     def manage_inventory(self):
@@ -118,7 +163,7 @@ class Character(Entity):
         """
         Returns the name of the character.
         """
-        return Rarity.color_name_from_rarity(self.name, self.rarity)
+        return color_from_rarity(self.name, self.rarity)
     
     def save(self):
         """
@@ -130,7 +175,7 @@ class Character(Entity):
             "speed": self.speed,
             "life": self.life,
             "maxlife": self.maxlife,
-            "rarity": self.rarity.name,
+            "rarity": self.name,
             "inventory": [item.save() for item in self.inventory],
             "equipment": [item.save() for item in self.equipment],
             "gold": self.gold,
@@ -145,7 +190,7 @@ class Character(Entity):
         Load the character's stats from a file.
         """
         save_data = eval(save_data)
-        rarity = Rarity.Rarity[save_data["rarity"]]
+        rarity = Rarity[save_data["rarity"]]
         character = Character(save_data["strength"], save_data["speed"], save_data["life"], rarity)
         character.rename(save_data["name"])
         character.maxlife = save_data["maxlife"]
@@ -157,3 +202,10 @@ class Character(Entity):
         character.cr = character.calculate_cr()
         character.ca = 10
         return character
+
+if __name__ == "__main__":
+    character = Character()
+    print(character.display_stats())
+    rcharacter = Character().generate_character()
+    print(rcharacter.display_stats())
+    print(character.display_character_sheet())

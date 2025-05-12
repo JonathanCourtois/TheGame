@@ -30,7 +30,7 @@ class Entity:
         """
         Display the stats of the entity.
         """
-        stats = f"Name : {color_from_rarity(f'{self.name:>20s}', self.rarity)} : "
+        stats = f"Name : {color_from_rarity(f'{self.name:^20s}', self.rarity)} : "
         stats = f"{stats}Class {color_from_rarity(self.rarity.name, self.rarity)}\n"
         stats = f"{stats}Level {'-'*21} :{' '*3}{self.level:2d}\n"
         if cr:
