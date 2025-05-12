@@ -11,6 +11,7 @@ def main():
 
     # Initialize the game
     print("Welcome to The Game!\n")
+    print(" ADD Utils/message.py where there will be all the messages to display.\n")
 
     # check if save directory exists
     if not os.path.exists("save"):

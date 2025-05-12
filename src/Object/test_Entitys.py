@@ -1,4 +1,5 @@
 import pytest
+import random
 from .Entity import Entity
 from src.utils.random_generator import Rarity
 
@@ -19,6 +20,14 @@ def test_entity_initialization():
     assert entity.cr            == entity.calculate_cr()
     assert entity.gold          == 0
     assert entity.xp            == 0
+
+def test_get_equipement_name():
+    entity = Entity()
+    assert entity.get_equipement_name(random.randint(1, 100)) == "E Error"
+
+def test_get_inventory_item_name():
+    entity = Entity()
+    assert entity.get_inventory_item_name(random.randint(1, 100)) == "E Error"
 
 def test_calculate_cr():
     entity      = Entity()
