@@ -53,6 +53,103 @@ class Entity:
             stats = f"{stats}XP {'-'*24} :{' '*2}{ctxt(f'{self.xp:3d}',Colors.CYAN)}\n"
         return stats
 
+    def get_equipement_name(self, slot):
+        """
+        Get the name of the equipment in the given slot.
+        """
+        return "Error"
+
+    def get_inventory_item_name(self, index):
+        """
+        Get the name of the item in the inventory at the given index.
+        """
+        return "Error"
+
+    def display_character_sheet(self, equipement=False, inventory=False):
+        """
+        Display the character stats in a sheet format.
+        format:
+        # HEDER #
+        # Stat 0 | equipment 0 #
+        # Stat 1 | equipment 1 #
+        # ...
+        # Stat n | #
+        # Inventory #
+        """
+        # HEADER
+        Header = f"# Name : {color_from_rarity(f'{self.name:^20s}', self.rarity)} :"
+        class_slot = f"Class {color_from_rarity(f'{self.rarity.name:1s}', self.rarity)}"
+        Header += f"{class_slot:^21s}:{'#'*60}\n"
+
+        sheet = f"{Header}# Level {'-'*21} :{self.level:^10d}:"
+        eq_h = ''
+        if equipement:
+            eq_h = f"{' ':15s}⌈{' Head':^12s}⌉{' ':15s}"
+            eq_h += f"⌈{' Neck':^12s}⌉ "
+
+        sheet += f"{eq_h}#\n"
+        sheet = f"{sheet}# CR {'-'*24} :{self.cr:^10d}:"
+        if equipement:
+            eq_h = f"{' ':15s}⌊{self.get_equipement_name('head'):^12s}⌋{' ':15s}"
+            eq_h += f"⌊{self.get_equipement_name('neck'):^12s}⌋ "
+        sheet += f"{eq_h}#\n"
+
+        sheet = f"{sheet}# Life {'-'*22} :{ctxt(f'{self.life:>5d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:<4d}',Colors.GREEN)}:"
+        if equipement:
+            eq_h = f" ⌈{'Left  Hand':^12s}⌉"
+            eq_h += f"⌈{'Body':^12s}⌉"
+            eq_h += f"⌈{'Right Hand':^12s}⌉ "
+            eq_h += f"⌈{'Belt':^12s}⌉ "
+        sheet += f"{eq_h}#\n"
+
+        sheet += f"# Constitution {'-'*14} :{self.constitution:^10d}:"
+        if equipement:
+            eq_h = f" ⌊{self.get_equipement_name('left hand'):^12s}⌋"
+            eq_h += f"⌊{self.get_equipement_name('body'):^12s}⌋"
+            eq_h += f"⌊{self.get_equipement_name('right hand'):^12s}⌋ "
+            eq_h += f"⌊{self.get_equipement_name('belt'):^12s}⌋ "
+        sheet += f"{eq_h}#\n"
+
+        sheet += f"# Speed {'-'*21} :{self.speed:^10d}:"
+        if equipement:
+            eq_h = f"{' ':15s}⌈{'Legs':^12s}⌉{' ':15s}"
+            eq_h += f"⌈{'Ring 1':^12s}⌉ "
+        sheet += f"{eq_h}#\n"
+
+        sheet += f"# Strength {'-'*18} :{self.strength:^10d}:"
+        if equipement:
+            eq_h = f"{' ':15s}⌊{self.get_equipement_name('legs'):^12s}⌋{' ':15s}"
+            eq_h += f"⌊{self.get_equipement_name('ring1'):^12s}⌋ "
+        sheet += f"{eq_h}#\n"
+
+        sheet += f"# Focus {'-'*21} :{self.focus:^10d}:"
+        if equipement:
+            eq_h = f"{' ':15s}⌈{'Feet':^12s}⌉{' ':15s}"
+            eq_h += f"⌈{'Ring 2':^12s}⌉ "
+        sheet += f"{eq_h}#\n"
+
+        sheet += f"# Gold {'-'*22} :{ctxt(f'{self.gold:^10d}',Colors.YELLOW)}:"
+        if equipement:
+            eq_h = f"{' ':15s}⌊{self.get_equipement_name('feet'):^12s}⌋{' ':15s}"
+            eq_h += f"⌊{self.get_equipement_name('ring2'):^12s}⌋ "
+        sheet += f"{eq_h}#\n"
+
+        sheet += f"# XP {'-'*24} :{ctxt(f'{self.xp:^10d}',Colors.CYAN)}:{' '*59}#\n"
+
+        if inventory:
+            sheet += f"# Inventory : {'-'*86} #\n"
+            # We assume there is only 4 slots for now
+            if len(self.inventory) >4:
+                raise NotImplementedError("Iventory with more than 4 slots not implemented yet.")
+            inventory = "#  "
+            for i in range(4):
+                inventory += f"[{self.get_inventory_item_name(i):^21s}] "
+            inventory += f"{' '*(101-len(inventory))}#\n"
+            sheet += f"{inventory}"
+        sheet += f"{'#'*102}\n"
+
+        return sheet
+
     def calculate_cr(self):
         """
         Calculate the Challenge Rating (CR) of the entity.
