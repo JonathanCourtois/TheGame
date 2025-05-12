@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
-import src.utils.random_generator as randgen
-import src.utils.display as dsp
+from src.utils.random_generator import random_rarity, Rarity
+from src.utils.display import color_from_rarity, ctxt, Colors
 
 class Entity:
     def __init__(self):
         self.name = "Entity"
-        self.rarity         = randgen.Rarity.D
+        self.rarity         = Rarity.D
 
         self.constitution   = 1 # for defense
         self.strength       = 1 # for attack
@@ -27,15 +30,15 @@ class Entity:
         """
         Display the stats of the entity.
         """
-        stats = f"Name : {dsp.color_from_rarity(f'{self.name:>20s}', self.rarity)} : "
-        stats = f"{stats}Class {dsp.color_from_rarity(self.rarity.name, self.rarity)}\n"
+        stats = f"Name : {color_from_rarity(f'{self.name:>20s}', self.rarity)} : "
+        stats = f"{stats}Class {color_from_rarity(self.rarity.name, self.rarity)}\n"
         stats = f"{stats}Level {'-'*21} :{' '*3}{self.level:2d}\n"
         if cr:
             stats = f"{stats}CR {'-'*24} :{' '*2}{self.cr:3d}\n"
         if life:
-            stats = f"{stats}Life {'-'*22} :{' '*2}{dsp.ctxt(f'{self.life:3d}',dsp.Colors.GREEN)}/{dsp.ctxt(f'{self.maxlife:3d}',dsp.Colors.GREEN)}\n"
+            stats = f"{stats}Life {'-'*22} :{' '*2}{ctxt(f'{self.life:3d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:3d}',Colors.GREEN)}\n"
         if maxlife:
-            stats = f"{stats}Max Life {'-'*18} :{' '*2}{dsp.ctxt(f'{self.maxlife:3d}',dsp.Colors.GREEN)}\n"
+            stats = f"{stats}Max Life {'-'*18} :{' '*2}{ctxt(f'{self.maxlife:3d}',Colors.GREEN)}\n"
         if cst:
             stats = f"{stats}Constitution {'-'*14} :{' '*3}{self.constitution:2d}\n"
         if spd:
@@ -45,9 +48,9 @@ class Entity:
         if fcs:
             stats = f"{stats}Focus {'-'*21} :{' '*3}{self.focus:2d}\n"
         if gold:
-            stats = f"{stats}Gold {'-'*22} :{' '*1}{dsp.ctxt(f'{self.gold:4d}',dsp.Colors.YELLOW)}\n"
+            stats = f"{stats}Gold {'-'*22} :{' '*1}{ctxt(f'{self.gold:4d}',Colors.YELLOW)}\n"
         if xp:
-            stats = f"{stats}XP {'-'*24} :{' '*2}{dsp.ctxt(f'{self.xp:3d}',dsp.Colors.CYAN)}\n"
+            stats = f"{stats}XP {'-'*24} :{' '*2}{ctxt(f'{self.xp:3d}',Colors.CYAN)}\n"
         return stats
 
     def calculate_cr(self):
@@ -205,6 +208,29 @@ class Entity:
             print(f"{self.displayed_name()} CR is now {self.cr}!")
             print(self.display_stats(xp=True))
 
+    def generate_entity(self, level:int = None, rarity:Rarity = None):
+        """
+        Generates a random entity with a random rarity and stats.
+        """
+        if rarity is None: # Set rarity to random value
+            self.rarity = random_rarity()
+        else:
+            self.rarity = rarity
+        # Add credits upgrade from rarity
+        rarity_credit = (self.rarity.value-1)*5
+
+        if level is None: # Set level to random value
+            self.level = random.randint(1, self.maxlevel)
+        else:
+            self.level = min(level, self.maxlevel)
+        # Add credits upgrade from level
+        level_credit = self.level-1
+
+        total_credit = rarity_credit + level_credit
+        # Upgrade stats
+        self.upgrade_stats(credit=total_credit)
+        return self
+
 
 if __name__ == "__main__":
     entity = Entity()
@@ -215,3 +241,7 @@ if __name__ == "__main__":
     entity.rename("NewName")
     entity.gain_xp(10)
     entity.upgrade_stats(credit=2, debug=True)
+    for i in range(10):
+        rentity = Entity().generate_entity()
+        rentity.rename("RandomEntity")
+        print(rentity.display_stats())

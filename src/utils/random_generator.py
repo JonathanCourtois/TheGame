@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import src.Object.Entity as Entity
-
 import random
 import math
 from enum import Enum
@@ -50,29 +48,6 @@ def random_rarity():
         k=1
     )[0]
     return rarity
-
-def generate_entity(entity, level:int = None, rarity:Rarity = None):
-    """
-    Generates a random entity with a random rarity and stats.
-    """
-    if rarity is None: # Set rarity to random value
-        entity.rarity = random_rarity()
-    else:
-        entity.rarity = rarity
-    # Add credits upgrade from rarity
-    rarity_credit = (entity.rarity.value-1)*5
-
-    if level is None: # Set level to random value
-        entity.level = random.randint(1, entity.maxlevel)
-    else:
-        entity.level = min(level, entity.maxlevel)
-    # Add credits upgrade from level
-    level_credit = entity.level-1
-
-    total_credit = rarity_credit + level_credit
-    # Upgrade stats
-    entity.upgrade_stats(credit=total_credit)
-    return entity
 
 
 
