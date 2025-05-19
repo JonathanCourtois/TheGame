@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
 from src.utils.random_generator import random_rarity, Rarity
-from src.utils.display import color_from_rarity, ctxt, Colors
+from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
 
 class Entity:
     def __init__(self):
@@ -30,8 +30,9 @@ class Entity:
         """
         Display the stats of the entity.
         """
-        stats = f"Name : {color_from_rarity(f'{self.name:^20s}', self.rarity)} : "
-        stats = f"{stats}Class {color_from_rarity(self.rarity.name, self.rarity)}\n"
+        
+        stats = f"Name : {color_text_from_rarity(f'{self.name:^20s}', self.rarity)} : "
+        stats = f"{stats}Class {color_text_from_rarity(self.rarity.name, self.rarity)}\n"
         stats = f"{stats}Level {'-'*21} :{' '*3}{self.level:2d}\n"
         if cr:
             stats = f"{stats}CR {'-'*24} :{' '*2}{self.cr:3d}\n"
@@ -65,7 +66,7 @@ class Entity:
         """
         return "E Error"
 
-    def display_sheet(self, equipement=False, inventory=False):
+    def display_sheet(self, equipement=False, inventory=False, xp=False):
         """
         Display the stats in a sheet format:
         # HEADER #
@@ -76,86 +77,97 @@ class Entity:
         # Inventory #
         """
         # HEADER
-        Header = f"# Name : {color_from_rarity(f'{self.name:^20s}', self.rarity)} :"
-        class_slot = f"Class {color_from_rarity(f'{self.rarity.name:1s}', self.rarity)}"
-        Header += f"{class_slot:^21s}"
+        sw = 120 # Sheet width
+        np = 20 # Name padding
+        ep = 12 # Equipment padding
+        cp = 15 # Empty Cell padding
+        vp = 11 # Stat Value padding
+        st = 14 # Stat padding
+        ip = 45 # Inventory padding
+        
+        Header  = f"# Name : {color_text_from_rarity(f'{self.name:^{np}s}', self.rarity)} :"
+        class_slot = f"Class {color_text_from_rarity(f'{self.rarity.name:1s}', self.rarity)}"
+        Header += f"{class_slot:^{vp+11}s}"
         if equipement:
-            Header += f"{'#'*60}"
+            Header += f"{'#'*(sw-vp-np-29)}"
         Header += f"#\n"
 
-        sheet = f"{Header}# Level {'-'*21} :{self.level:^10d}"
+        sheet = f"{Header}# Level {'-'*(st+7)} :{self.level:^{vp}d}"
         eq_h = ''
         if equipement:
-            eq_h = f"#{' ':15s}⌈{' Head':^12s}⌉{' ':15s}"
-            eq_h += f"⌈{' Neck':^12s}⌉ "
+            eq_h = f"#{' ':{cp}s}⌈{' Head':^{ep}s}⌉{' ':{cp}s}"
+            eq_h += f"⌈{' Neck':^{ep}s}⌉ "
 
         sheet += f"{eq_h}#\n"
-        sheet = f"{sheet}# CR {'-'*24} :{self.cr:^10d}"
+        sheet = f"{sheet}# CR {'-'*(st+10)} :{self.cr:^{vp}d}"
         if equipement:
-            eq_h = f"#{' ':15s}⌊{self.get_equipement_name('head'):^12s}⌋{' ':15s}"
-            eq_h += f"⌊{self.get_equipement_name('neck'):^12s}⌋ "
+            eq_h = f"#{' ':{cp}s}⌊{self.get_equipement_name('head'):^{ep}s}⌋{' ':{cp}s}"
+            eq_h += f"⌊{self.get_equipement_name('neck'):^{ep}s}⌋ "
         sheet += f"{eq_h}#\n"
 
-        sheet = f"{sheet}# Life {'-'*22} :{ctxt(f'{self.life:>5d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:<4d}',Colors.GREEN)}"
+        sheet = f"{sheet}# Life {'-'*(st+8)} :{ctxt(f'{self.life:>{int(vp/2)}d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:<{int(vp/2)}d}',Colors.GREEN)}"
         if equipement:
-            eq_h = f"# ⌈{'Left  Hand':^12s}⌉"
-            eq_h += f"⌈{'Body':^12s}⌉"
-            eq_h += f"⌈{'Right Hand':^12s}⌉ "
-            eq_h += f"⌈{'Belt':^12s}⌉ "
+            eq_h = f"# ⌈{'Left  Hand':^{ep}s}⌉"
+            eq_h += f"⌈{'Body':^{ep}s}⌉"
+            eq_h += f"⌈{'Right Hand':^{ep}s}⌉ "
+            eq_h += f"⌈{'Belt':^{ep}s}⌉ "
         sheet += f"{eq_h}#\n"
 
-        sheet += f"# Constitution {'-'*14} :{self.constitution:^10d}"
+        sheet += f"# Constitution {'-'*(st)} :{self.constitution:^{vp}d}"
         if equipement:
-            eq_h = f"# ⌊{self.get_equipement_name('left hand'):^12s}⌋"
-            eq_h += f"⌊{self.get_equipement_name('body'):^12s}⌋"
-            eq_h += f"⌊{self.get_equipement_name('right hand'):^12s}⌋ "
-            eq_h += f"⌊{self.get_equipement_name('belt'):^12s}⌋ "
+            eq_h = f"# ⌊{self.get_equipement_name('left hand'):^{ep}s}⌋"
+            eq_h += f"⌊{self.get_equipement_name('body'):^{ep}s}⌋"
+            eq_h += f"⌊{self.get_equipement_name('right hand'):^{ep}s}⌋ "
+            eq_h += f"⌊{self.get_equipement_name('belt'):^{ep}s}⌋ "
         sheet += f"{eq_h}#\n"
 
-        sheet += f"# Speed {'-'*21} :{self.speed:^10d}"
+        sheet += f"# Speed {'-'*(st+7)} :{self.speed:^{vp}d}"
         if equipement:
-            eq_h = f"#{' ':15s}⌈{'Legs':^12s}⌉{' ':15s}"
-            eq_h += f"⌈{'Ring 1':^12s}⌉ "
+            eq_h = f"#{' ':{cp}s}⌈{'Legs':^{ep}s}⌉{' ':{cp}s}"
+            eq_h += f"⌈{'Ring 1':^{ep}s}⌉ "
         sheet += f"{eq_h}#\n"
 
-        sheet += f"# Strength {'-'*18} :{self.strength:^10d}"
+        sheet += f"# Strength {'-'*(st+4)} :{self.strength:^{vp}d}"
         if equipement:
-            eq_h = f"#{' ':15s}⌊{self.get_equipement_name('legs'):^12s}⌋{' ':15s}"
-            eq_h += f"⌊{self.get_equipement_name('ring1'):^12s}⌋ "
+            eq_h = f"#{' ':{cp}s}⌊{self.get_equipement_name('legs'):^{ep}s}⌋{' ':{cp}s}"
+            eq_h += f"⌊{self.get_equipement_name('ring1'):^{ep}s}⌋ "
         sheet += f"{eq_h}#\n"
 
-        sheet += f"# Focus {'-'*21} :{self.focus:^10d}"
+        sheet += f"# Focus {'-'*(st+7)} :{self.focus:^{vp}d}"
         if equipement:
-            eq_h = f"#{' ':15s}⌈{'Feet':^12s}⌉{' ':15s}"
-            eq_h += f"⌈{'Ring 2':^12s}⌉ "
+            eq_h = f"#{' ':{cp}s}⌈{'Feet':^{ep}s}⌉{' ':{cp}s}"
+            eq_h += f"⌈{'Ring 2':^{ep}s}⌉ "
         sheet += f"{eq_h}#\n"
 
-        sheet += f"# Gold {'-'*22} :{ctxt(f'{self.gold:^10d}',Colors.YELLOW)}"
+        sheet += f"# Gold {'-'*(st+8)} :{ctxt(f'{self.gold:^{vp}d}',Colors.YELLOW)}"
         if equipement:
-            eq_h = f"#{' ':15s}⌊{self.get_equipement_name('feet'):^12s}⌋{' ':15s}"
-            eq_h += f"⌊{self.get_equipement_name('ring2'):^12s}⌋ "
+            eq_h = f"#{' ':{cp}s}⌊{self.get_equipement_name('feet'):^{ep}s}⌋{' ':{cp}s}"
+            eq_h += f"⌊{self.get_equipement_name('ring2'):^{ep}s}⌋ "
         sheet += f"{eq_h}#\n"
 
-        sheet += f"# XP {'-'*24} :{ctxt(f'{self.xp:>5d}',Colors.CYAN)}/{ctxt(f'{(4*self.level)**2:<4d}',Colors.CYAN)}"
-        if equipement:
-            sheet += f"#{' '*59}#\n"
-        else:
-            sheet += f"#\n"
+        if xp:
+            sheet += f"# XP {'-'*(st+10)} :{ctxt(f'{self.xp:>{int(vp/2)}d}',Colors.CYAN)}/{ctxt(f'{(4*self.level)**2:<{int(vp/2)}d}',Colors.CYAN)}"
+            if equipement:
+                sheet += f"#{' '*(4*cp-1)}#\n"
+            else:
+                sheet += f"#\n"
 
         if inventory:
             # sheet += self.display_inventory_sheet(name_only=True)
-            sheet += f"# Inventory {'#'*90}\n"
+            sheet += f"# Inventory {'#'*(st+5+vp+1+4*cp)}\n"
             inventory = ""
             for i in range(2):
                 for j in range(2):
-                    inventory += f"# [{self.get_inventory_item_name(i):^45s}] #"
+                    inventory += f"# [{self.get_inventory_item_name(i):^{ip}s}] #"
+                    if j == 0:
+                        inventory += " "
                 inventory += f"\n"
             sheet += f"{inventory}"
 
         if inventory or equipement:
-            sheet += f"{'#'*102}\n"
+            sheet += f"{'#'*(2*ip+ep+1)}\n"
         else:
-            sheet += f"{'#'*42}\n"
+            sheet += f"{'#'*(np+st+vp-2)}\n"
 
         return sheet
 
@@ -170,7 +182,7 @@ class Entity:
         """
         Returns the name of the entity.
         """
-        return color_from_rarity(f'{self.name:>20s}', self.rarity)
+        return color_text_from_rarity(f'{self.name:>20s}', self.rarity)
 
     def roll_d(self, sides):
         """
@@ -351,7 +363,11 @@ if __name__ == "__main__":
         rentity = Entity().generate_entity()
         rentity.rename("RandomEntity")
         print(rentity.display_stats())
-    print(entity.display_sheet())
-    print(entity.display_sheet(inventory=True))
-    print(entity.display_sheet(equipement=True))
-    print(entity.display_sheet(equipement=True, inventory=True))
+    
+    rentity = Entity().generate_entity(level=25)
+    rentity.xp = 10000
+    for i in range(2**3):
+        a,b,x = bin(i)[2:].zfill(3)
+        print(rentity.display_sheet(inventory=bool(int(a)), equipement=bool(int(b)), xp=bool(int(x))))
+    rentity.display_sheet(equipement=True, inventory=True, xp=True)
+        
