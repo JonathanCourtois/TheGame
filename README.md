@@ -29,9 +29,10 @@ TheGame-0.0.1/
 ## Getting Started
 
 ### Prerequisites
-- **Git Bash**: Install Git Bash from [Git Downloads](https://git-scm.com/downloads).
+- **Python 3.8+**: Ensure you have Python installed. You can download it from [python.org](https://www.python.org/downloads/).
 - **UV Environment**: Install UV using one of the following methods:
    - Recommended: Follow the [UV Installation Guide](https://docs.astral.sh/uv/getting-started/installation).
+- **Git Bash**: Install Git Bash from [Git Downloads](https://git-scm.com/downloads) for ease of use.
 
 ### Installation
 1. Download the latest release from [The Game Releases](https://github.com/JonathanCourtois/TheGame/releases).
