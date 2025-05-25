@@ -1,43 +1,60 @@
-import random
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from src.utils.random_generator import random_rarity, Rarity
+from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
 from src.Object.Entity import Entity
-from src.utils.display import ctxt, Colors
+import pickle as pkl
 
 class Monster(Entity):
     """
     A class representing a monster in the game.
     Inherits from the Entity class.
     """
-    def __init__(self, name, strength, speed, life):
-        super().__init__(strength, speed, life)
-        self.name = name
-        self.ca = 10
-        self.cr = self.calculate_cr()
-        self.xp = random.randint(int(self.cr/3), int(self.cr/2))
-        self.gold = random.randint(int(self.cr/3), self.cr)
+    def __init__(self):
+        super().__init__()
+        self.name = "Monster"
+        self.inventory = []
+        self.equipment = {'head': None, 'body': None, 'legs': None, 'feet': None, 'left hand': None, 'right hand': None, 'neck': None, 'ring1': None, 'ring2': None, 'belt': None}
 
     def display_stats(self, stats=""):
+        print(f"Deprecated method display_stats, use display_sheet instead.")
         stats = f"Name:\t\t{self.name}\n"
         stats = super().display_stats(stats)
         return stats
 
-    @staticmethod
-    def generate_random_monster():
-        name = random.choice(list(monster_stat_list.keys()))
-        stats = monster_stat_list[name]
-        strength = random.randint(stats["strength"][0], stats["strength"][1])
-        speed = random.randint(stats["speed"][0], stats["speed"][1])
-        life = random.randint(stats["life"][0], stats["life"][1])
-        return Monster(name, strength, speed, life)
-    
-    def generate_random_monster_leveled(Character, range:int=2):
-        carac_cr = Character.calculate_cr()
-        monster = Monster.generate_random_monster()
-        while monster.cr < carac_cr - 4*range or monster.cr > carac_cr + range:
-            monster = Monster.generate_random_monster()
-            monster.cr  = monster.calculate_cr()
-            carac_cr    = Character.calculate_cr()
+    def display_sheet(self, equipement=False, inventory=False, xp=False):
+        """
+        Display the character stats in a sheet format.
+        format:
+        # HEADER #
+        # Stat 0 | equipment 0 #
+        # Stat 1 | equipment 1 #
+        # ...
+        # Stat n | #
+        # Inventory #
+        """
+        sheet = super().display_sheet(equipement=equipement, inventory=inventory, xp=xp)
 
-        return monster
+        return sheet
+    
+    def generate(self, level=None, rarity=None, name="Monster"):
+        self.__init__()
+        self.name = name
+        super().generate(level=level, rarity=rarity)
+        return self
+    
+# rework until here
+
+    def generate_ranged(self, Character, range:int=2):
+        charac_cr = Character.calculate_cr()
+        self.generate(name=f"{self.name}")
+        while self.cr > charac_cr + range:
+
+            self.generate(name=f"{self.name}")
+            # print(f"Generated monster {self.name} with CR {self.cr} and Character CR {charac_cr} with range {range}")
+
+        return self
 
 monster_stat_list = {
     "Goblin": {

@@ -1,70 +1,87 @@
+# -*- coding: utf-8 -*-
+import sys
 import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from src.Object.character import Character
+from src.Object.monster import Monster
 from src.utils.display import ctxt, Colors
 
-def fight(character, monster):
+def fight(fighters_list:list):
     """
     Simulates a fight between a character and a monster.
     The character and monster take turns attacking each other until one of them runs out of life.
     """
-    print(f"A wild {monster.name} appears!")
-    print(f"Monster Stats:\n{monster.display_stats()}")
-    print(f"Character Stats:\n{character.display_stats()}")
-
-    print(f"{character.name} vs {monster.name}!")
-    print(f"your cr is {character.cr} and the monster's cr is {monster.cr} the fight looks {fight_difficulty(character, monster)}\n")
-    input("press enter to start the fight !")
-
-    open_inventory  = False
-    flee            = False
+    print("\n\n### FIGHT ###\n")
+    # Check if fighters_list is empty
+    if not fighters_list:
+        print(f"{ctxt('ERROR', Colors.RED)}: No fighters to fight.")
+        return
+    # Check if fighters_list has more than 2 fighters
+    if len(fighters_list) > 2:
+        print(f"{ctxt('ERROR', Colors.RED)}: Too many fighters to fight. Only 2 fighters are allowed for now.")
+        return  
+    fighters = []
+    # Initialize fighters list with each item of list being a list with :
+    # [0:fighter, 1:speed_counter, 2:flee, 3:open_inventory]
+    for entity in fighters_list:
+        fighters.append([entity, 0, False, False])
     # Fight loop
-    fighters = [character, monster]
-    max_speed = max(fighter.speed for fighter in fighters)
-    speed_counter = [0, 0]
-    while character.life > 0 and monster.life > 0:
+    max_speed = max(entity.speed for entity, _, _, _ in fighters)
+
+    while all(entity.life > 0 for entity, _, _, _ in fighters):
         for i, fighter in enumerate(fighters):
-            speed_counter[i] += fighter.speed
-            if speed_counter[i] >= max_speed:
-                speed_counter[i] -= max_speed
-                if open_inventory:
-                    fighter.manage_inventory()
-                    open_inventory  = False
-                elif flee:
-                    print(f"{character.name} tried to flee!")
-                    # to flee, the character must succeed a d20 roll + speed facing the monster's d20 roll + speed
-                    flee_roll    = character.roll_d(20) + character.speed
-                    monster_roll = monster.roll_d(20) + monster.speed
-                    if flee_roll > monster_roll:
-                        print(f"{character.name} fled successfully!")
+            fighter[1] += fighter[0].speed
+            if fighter[1] >= max_speed:
+                fighter[1] -= max_speed
+                if fighter[3]:
+                    fighter[0].manage_inventory()
+                    fighter[3] = False
+                elif fighter[2]:
+                    print(f"{fighter[0].displayed_name()} tried to flee!")
+                    # to flee, the character must succeed a d'speed' roll facing the monster's d'speed' roll
+                    flee_roll    = fighter[0].roll_d(fighter[0].speed)
+                    opponent_roll = fighters[1-i][0].roll_d(fighters[1-i][0].speed)
+                    if flee_roll > opponent_roll:
+                        print(f"{fighter[0].displayed_name()} fled successfully!")
                         return
                     else:
-                        print(f"{character.name} failed to flee!")
+                        print(f"{fighter[0].displayed_name()} failed to flee!")
                 else:
-                    hit, damage = fighter.attack()
-                    fighters[1-i].defend(hit, damage)
-                action = input("\npress i to open inventory, f to flee or any other key to continue!\n")
+                    hit, damage = fighter[0].attack()
+                    fighters[1-i][0].defend(hit, damage)
+
+                if isinstance(fighter[0], Character):
+                    action = input(f"\npress i to open inventory, f to flee or any other key to continue for {fighter[0].displayed_name()}\n")
+                elif isinstance(fighter[0], Monster):
+                    if fighter[0].life < fighter[0].maxlife / 3:
+                        flee_roll = fighter[0].roll_d(100)
+                        if flee_roll > fighter[0].life * 100 / fighter[0].maxlife:
+                            action = "f"
 
                 if action == "i":
-                    open_inventory = True
+                    fighter[3] = True
                 elif action == "f":
-                    flee = True
+                    fighter[2] = True
                 else:
-                    open_inventory  = False
-                    flee            = False
-                if fighters[1-i].life <= 0:
+                    fighter[3] = False
+                    fighter[2] = False
+                if fighters[1-i][0].life <= 0:
                     break
-    
-    if character.life <= 0:
-        print(f"{character.name} has been {ctxt('defeated',Colors.RED)} by {monster.name}!")
-        # delete save file
-        if os.path.exists("save/character_save.txt"):
-            os.remove("save/character_save.txt")
-        print(ctxt("\nSave file deleted.", Colors.RED))
-        print(ctxt("GAME OVER\n", Colors.RED))
-        exit()
-    elif monster.life <= 0:
-        print(f"{monster.name} has been {ctxt('defeated',Colors.RED)} by {character.name}!")
-        character.get_loot_from_monster(monster)
 
+
+    # Check which fighter has been defeated
+    for i, fighter in enumerate(fighters):
+        if fighter[0].life <= 0:
+            print(f"{fighter[0].name} has been {ctxt('defeated',Colors.RED)} by {fighters[1-i][0].name}!")
+            # delete save file if it's a character
+            if isinstance(fighter[0], Character):
+                fighter[0].delete_save_file()
+                exit()
+            else:
+                print(f"{fighters[1-i][0].displayed_name()} wins the fight!")
+            return
+    print(f"{ctxt('ERROR', Colors.RED)}: Fight ended without a winner. This should not happen.")
+    return
 
 def fight_difficulty(character, monster):
     """

@@ -326,7 +326,7 @@ class Entity:
             print(f"{self.displayed_name()} CR is now {self.cr}!")
             print(self.display_stats(xp=True))
 
-    def generate_entity(self, level:int = None, rarity:Rarity = None):
+    def generate(self, level:int = None, rarity:Rarity = None):
         """
         Generates a random entity with a random rarity and stats.
         """
@@ -360,11 +360,11 @@ if __name__ == "__main__":
     entity.gain_xp(10)
     entity.upgrade_stats(credit=2, debug=True)
     for i in range(10):
-        rentity = Entity().generate_entity()
+        rentity = Entity().generate()
         rentity.rename("RandomEntity")
         print(rentity.display_stats())
     
-    rentity = Entity().generate_entity(level=25)
+    rentity = Entity().generate(level=25)
     rentity.xp = 10000
     for i in range(2**3):
         a,b,x = bin(i)[2:].zfill(3)

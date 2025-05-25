@@ -1,5 +1,6 @@
 import random
 from src.Object.character import Character
+from src.Object.monster import Monster
 import src.utils.random_generator as randgen
 import src.utils.fight as fight
 # import src.utils.merchant as Merchant
@@ -10,64 +11,49 @@ import os
 def main():
 
     # Initialize the game
-    print("Welcome to The Game!\n")
-    print(" ADD Utils/message.py where there will be all the messages to display.\n")
+    print("\n### Welcome to The Game! ###\n\n")
+    print(" DEV MSG TO DEV : ADD Utils/message.py where there will be all the messages to display.\n")
 
-    # check if save directory exists
-    if not os.path.exists("save"):
-        os.makedirs("save")
-        print("Save directory created.")
-    # Ask to load old save file ?
-    try:
-        with open("save/character_save.txt", "r") as f:
-            action = input("A save file was found, do you want to load it? (y/n) ")
-            if action.lower() == 'y':
-                # Load character from save file
-                character = Character.load(f.read())
-                print(f"Character loaded: {character.name}")
-            else:
-                # Generate a random character
-                character = Character().generate_character()
-                print(f"New character created: {character.name}")
-    except FileNotFoundError:
-        # Generate a random character
-        character = Character().generate_character()
-        print(f"New character created: {character.name}")
+    character = Character().manage_save()
+    if character is None:
+        character = Character().generate()
+        print(f"New character created:\n")
 
     # Display character stats
-    print(f"Character Stats:\n{character.display_stats()}")
-    character.display_inventory_name_only()
+    print(character.display_sheet())
 
     # Start the game loop (placeholder for now)
     while True:
         action = input("\nWhat would you like to do? (s: stats, i: inventory, e: explore, rename: rename character, exit: exit) ")
         print("")
         if action.lower() == 'exit':
-            with open("save/character_save.txt", "w") as f:
-                f.write(character.save())
-            print("Character saved!\n")
-            print("Exiting the game. Goodbye!")
+            character.save()
+            print("\n### Exiting the game. Goodbye! ###")
             break
+
         elif action.lower() == 'rename':
             new_name = input("Enter a new name for your character: ")
             character.name = new_name
-            print(f"Character renamed to {new_name}!")
+            print(f"Character renamed to {character.displayed_name()}!")
 
         elif action.lower() == 's':
-            print(f"Character Stats:\n{character.display_stats()}")
+            print(f"Character Stats:\n{character.display_sheet()}")
 
         elif action.lower() == 'i':
-            character.manage_inventory()
+            print(f"{dsp.ctxt('ERROR', dsp.Colors.RED)}: Inventory management is not implemented yet.")
+            # character.manage_inventory()
 
         elif action.lower() == 'e':
             enconter_seed = random.random()
+            enconter_seed = 0.9
             if enconter_seed < 0.05: # Fight
                 print("You found a random monster!")
-                monster = Monster.generate_random_monster()
-                fight.fight(character, monster)
+                monster = Monster().generate()
+                fight.fight([character, monster])
+
             elif enconter_seed < 0.3:
                 gold = randgen.gold_chest()
-                print(f"You found {ctxt(f'{gold}',Colors.YELLOW)} gold!")
+                print(f"You found {dsp.ctxt(f'{gold}',dsp.Colors.YELLOW)} gold!")
                 character.gold += gold
 
             elif enconter_seed < 0.6:
@@ -77,10 +63,15 @@ def main():
 
             elif enconter_seed < 0.8:
                 print("You found a merchant!")
-                merchant = Merchant(character)
+                print(f"{dsp.ctxt('ERROR', dsp.Colors.RED)}: merchant is not implemented yet.")
+                # merchant = Merchant(character)
             else:
-                monster = Monster.generate_random_monster_leveled(character)
-                fight.fight(character, monster)
+                print("You found a monster!")
+                monster = Monster().generate_ranged(character)
+                print(f"Monster encountered:\n{monster.display_sheet()}")
+                action = input("Do you want to fight the monster? (yes/no) ")
+                if action.lower() == 'yes':
+                    fight.fight([character, monster])
 
         elif action.lower() == 'level':
             action = input("Enter the level you want to reach: ")

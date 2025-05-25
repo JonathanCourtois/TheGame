@@ -3,8 +3,9 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from src.utils.random_generator import random_rarity, Rarity
-from src.utils.display import color_from_rarity, ctxt, Colors
+from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
 from src.Object.Entity import Entity
+import pickle as pkl
  
 class Character(Entity):
     def __init__(self):
@@ -13,12 +14,13 @@ class Character(Entity):
         self.inventory = []
         self.equipment = {'head': None, 'body': None, 'legs': None, 'feet': None, 'left hand': None, 'right hand': None, 'neck': None, 'ring1': None, 'ring2': None, 'belt': None}
 
-    def generate_character(self, level=1, rarity=None):
-        self.generate_entity(level=level, rarity=rarity)
+    def generate(self, level=1, rarity=None):
+        super().generate(level=level, rarity=rarity)
         return self
     
     def display_stats(self, cr:bool=True, life:bool=True, cst:bool=True, spd:bool=True, strg:bool=True, fcs:bool=True,
                       gold:bool=True, xp:bool=True, maxlife:bool=False):
+        print(f"Deprecated method display_stats, use display_sheet instead.")
         stats = super().display_stats(cr=cr, life=life, cst=cst, spd=spd, strg=strg, fcs=fcs,gold=gold, xp=xp)
         # ADD Inventory Display
         stats += self.display_equipement(name_only=True)
@@ -80,18 +82,18 @@ class Character(Entity):
         else:
             return 'Empty'
 
-    def display_sheet(self, equipement=True, inventory=True):
+    def display_sheet(self, equipement=True, inventory=True, xp=True):
         """
         Display the character stats in a sheet format.
         format:
-        # HEDER #
+        # HEADER #
         # Stat 0 | equipment 0 #
         # Stat 1 | equipment 1 #
         # ...
         # Stat n | #
         # Inventory #
         """
-        sheet = super().display_sheet(equipement=equipement, inventory=inventory)
+        sheet = super().display_sheet(equipement=equipement, inventory=inventory, xp=xp)
 
         return sheet
 
@@ -167,51 +169,130 @@ class Character(Entity):
         """
         Returns the name of the character.
         """
-        return color_from_rarity(self.name, self.rarity)
+        return color_text_from_rarity(self.name, self.rarity)
     
     def save(self):
         """
         Save the character's stats to a file.
         """
-        save_data = {
-            "name": self.name,
-            "strength": self.strength,
-            "speed": self.speed,
-            "life": self.life,
-            "maxlife": self.maxlife,
-            "rarity": self.name,
-            "inventory": [item.save() for item in self.inventory],
-            "equipment": [item.save() for item in self.equipment],
-            "gold": self.gold,
-            "xp": self.xp,
-            "level": self.level
-        }
-        return str(save_data)
-    
+        action = input(f"Do you want to save the character {self.displayed_name()} {self.rarity.name} {self.level}? (y/n): ")
+        if action.lower() != 'y':
+            print("Character not saved.")
+            return
+        # check if the save/characters.pkl file exists
+        if not os.path.exists("save"):
+            os.makedirs("save")
+        if not os.path.exists("save/characters.pkl"):
+            with open("save/characters.pkl", "wb") as f:
+                pkl.dump({}, f)
+        # load the existing characters
+        with open("save/characters.pkl", "rb") as f:
+            characters = pkl.load(f)
+
+        # check if the character already exists
+        if f"{self.name} {self.rarity.name} {self.level}" in characters:
+            action = input(f"Character {self.displayed_name()} {self.rarity.name} {self.level} already exists. Do you want to overwrite it? (y/n): ")
+            if action.lower() != 'y':
+                print("Character not saved.")
+                return
+            else:
+                print("Character overwrited.")
+        
+        characters[f"{self.name} {self.rarity.name} {self.level}"] = self
+
+        with open("save/characters.pkl", "wb") as f:
+            pkl.dump(characters, f)
+        
+        return
+                
+    def delete_save_file(self, save_file="save/characters.pkl"):
+        """
+        Delete the character's save file.
+        """
+        if not os.path.exists("save"):
+            print("Save directory does not exist.")
+            return None
+        if not os.path.exists(save_file):
+            print("Characters save file does not exist.")
+            return None
+        
+        # load the existing characters
+        with open(save_file, "rb") as f:
+            characters = pkl.load(f)
+
+        if f"{self.name} {self.rarity.name} {self.level}" in characters:
+            del characters[f"{self.name} {self.rarity.name} {self.level}"]
+            with open(save_file, "wb") as f:
+                pkl.dump(characters, f)
+            print(f"Character {self.displayed_name()} deleted.")
+        else:
+            print(f"Character {self.displayed_name()} not found in save file.")
+
     @staticmethod
-    def load(save_data):
+    def manage_save(save_file="save/characters.pkl"):
         """
-        Load the character's stats from a file.
+        manage_save character's from a file.
         """
-        save_data = eval(save_data)
-        rarity = Rarity[save_data["rarity"]]
-        character = Character(save_data["strength"], save_data["speed"], save_data["life"], rarity)
-        character.rename(save_data["name"])
-        character.maxlife = save_data["maxlife"]
-        character.inventory = [Item.load(item) for item in save_data["inventory"]]
-        character.equipment = save_data["equipment"]
-        character.gold = save_data["gold"]
-        character.xp = save_data["xp"]
-        character.level = save_data["level"]
-        character.cr = character.calculate_cr()
-        return character
+        if not os.path.exists("save"):
+            print("Save directory does not exist.")
+            return None
+        if not os.path.exists(save_file):
+            print("Characters save file does not exist.")
+            return None
+        
+        # load the existing characters
+        with open(save_file, "rb") as f:
+            characters = pkl.load(f)
+
+        if len(characters) > 0:
+            action = (f"{len(characters)} characters found. Do you want to load or manage the saves (l) OR start with a new character (n): ")
+            action = input(action)
+            if action.lower() == 'l':
+                while True:
+                    for i, (name, character) in enumerate(characters.items()):
+                        print(f"{i} - {name}")
+                    action = input("Do you want to load a character (l), delete one (d) or start with a new one (n)? ")
+                    if action.lower() == 'd':
+                        index = int(input("Enter the index of the character you want to delete: "))
+                        if 0 <= index < len(characters):
+                            character_name = list(characters.keys())[index]
+                            del characters[character_name]
+                            with open(save_file, "wb") as f:
+                                pkl.dump(characters, f)
+                            with open(save_file, "rb") as f:
+                                characters = pkl.load(f)
+                            print(f"Character {character_name} deleted.")
+                        else:
+                            print("Invalid index. No character deleted.")
+                    elif action.lower() == 'l':
+                        action = input("Enter the number of the character you want to load: ")
+                        try:
+                            index = int(action)
+                            if 0 <= index < len(characters):
+                                character_name = list(characters.keys())[index]
+                                print(f"Loading character: {character_name}")
+                                return characters[character_name]
+                            else:
+                                print("Invalid index. No character loaded.")
+                        except ValueError:
+                            print("Invalid input. No character loaded.")
+                        return None
+                    else:
+                        return None                
+            else:
+                return None
+            
+        else:
+            print("No character save found.")
+
+        return None
 
 if __name__ == "__main__":
     print("Basic Character Test")
     character = Character()
     print(character.display_stats())
     print("Random Character Test")
-    rcharacter = Character().generate_character()
+    rcharacter = Character().generate()
     print(rcharacter.display_stats())
     print("Character Sheet Test")
     print(character.display_sheet())
