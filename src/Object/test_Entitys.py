@@ -85,9 +85,9 @@ def test_upgrade_stats():
     entity.upgrade_stats(credit=1)
     assert entity.constitution >= initial_constitution
 
-def test_generate_entity():
+def test_generate():
     for i in range(10):
-        rentity = Entity().generate_entity()
+        rentity = Entity().generate()
         assert rentity.rarity.name in ["S", "A", "B", "C", "D"]
         assert 1 <= rentity.level <= rentity.maxlevel
         assert 1 <= rentity.constitution <= 50
@@ -96,12 +96,12 @@ def test_generate_entity():
         assert 1 <= rentity.speed <= 50
         assert 10 <= rentity.life <= 500
         assert 10 <= rentity.maxlife <= 500
-        rentity = Entity().generate_entity(level=5)
+        rentity = Entity().generate(level=5)
         assert rentity.level == 5
         assert rentity.rarity.name in ["S", "A", "B", "C", "D"]
-        rentity = Entity().generate_entity(rarity=Rarity.A)
+        rentity = Entity().generate(rarity=Rarity.A)
         assert rentity.rarity.name == "A"
         assert 1 <= rentity.level <= rentity.maxlevel
-        rentity = Entity().generate_entity(level=3, rarity=Rarity.B)
+        rentity = Entity().generate(level=3, rarity=Rarity.B)
         assert rentity.level == 3
         assert rentity.rarity.name == "B"
