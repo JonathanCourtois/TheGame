@@ -44,34 +44,31 @@ def main():
             # character.manage_inventory()
 
         elif action.lower() == 'e':
-            enconter_seed = random.random()
-            enconter_seed = 0.9
-            if enconter_seed < 0.05: # Fight
+            encounter_seed = random.random() + 0.3
+            if encounter_seed < 0.05: # Fight
                 print("You found a random monster!")
                 monster = Monster().generate()
                 fight.fight([character, monster])
 
-            elif enconter_seed < 0.3:
+            elif encounter_seed < 0.3:
                 gold = randgen.gold_chest()
                 print(f"You found {dsp.ctxt(f'{gold}',dsp.Colors.YELLOW)} gold!")
                 character.gold += gold
 
-            elif enconter_seed < 0.6:
+            elif encounter_seed < 0.6:
                 print("You found a healing potion!")
                 heal_potion = randgen.heal_potion()
                 character.heal(heal_potion)
 
-            elif enconter_seed < 0.8:
+            elif encounter_seed < 0.8:
                 print("You found a merchant!")
                 print(f"{dsp.ctxt('ERROR', dsp.Colors.RED)}: merchant is not implemented yet.")
                 # merchant = Merchant(character)
             else:
-                print("You found a monster!")
-                monster = Monster().generate_ranged(character)
-                print(f"Monster encountered:\n{monster.display_sheet()}")
-                action = input("Do you want to fight the monster? (yes/no) ")
-                if action.lower() == 'yes':
-                    fight.fight([character, monster])
+                print("You encountered a monster!")
+                monster = Monster().generate_ranged(character, range=character.level-1)
+                print(f"{monster.display_sheet()}")
+                fight.fight([character, monster])
 
         elif action.lower() == 'level':
             action = input("Enter the level you want to reach: ")

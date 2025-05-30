@@ -171,6 +171,24 @@ class Character(Entity):
         """
         return color_text_from_rarity(self.name, self.rarity)
     
+    def life_status(self, add_name=True):
+        """
+        Returns a sentence relating the life status of the entity.
+        """
+        life_color = self.life_color()
+        if add_name:
+            name = self.displayed_name()
+        else:
+            name = ""
+        if self.life <= 0:
+            return f"{name} is dead!"
+        elif self.life < self.maxlife*0.2:
+            return f"{name} looks really bad! {ctxt(f'{self.life}', life_color)} hit point left!"
+        elif self.life < self.maxlife*0.5:
+            return f"{name} looks wounded! {ctxt(f'{self.life}', life_color)} hit point left!"
+        else:
+            return f"{name} looks to handle it! {ctxt(f'{self.life}', life_color)} hit point left!"
+        
     def save(self):
         """
         Save the character's stats to a file.
