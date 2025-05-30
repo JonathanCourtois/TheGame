@@ -2,6 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from src.utils.random_generator import random_rarity, Rarity
+import random
 from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
 from src.Object.Entity import Entity
 import pickle as pkl
@@ -38,15 +39,22 @@ class Monster(Entity):
 
         return sheet
     
+    def displayed_name(self):
+        """
+        Returns the name of the character.
+        """
+        return color_text_from_rarity(self.name, self.rarity)
+    
     def generate(self, level=None, rarity=None, name="Monster"):
         self.__init__()
         self.name = name
         super().generate(level=level, rarity=rarity)
-        return self
-    
-# rework until here
 
-    def generate_ranged(self, Character, range:int=2):
+        all_stats_sum = (self.strength + self.speed + self.life + self.constitution + self.focus + self.rarity.value)/10
+        self.gold = random.randint(int(all_stats_sum * 0.3), int(all_stats_sum * 1.5))
+        return self
+
+    def generate_ranged(self, Character, range:int=1):
         charac_cr = Character.calculate_cr()
         self.generate(name=f"{self.name}")
         while self.cr > charac_cr + range:
@@ -57,15 +65,15 @@ class Monster(Entity):
         return self
 
 monster_stat_list = {
-    "Goblin": {
-        "strength": (0, 3),
-        "speed": (0, 3),
-        "life": (10, 20),
-    },
     "Slime": {
         "strength": (0, 2),
         "speed": (0, 2),
         "life": (2, 10),
+    },
+    "Goblin": {
+        "strength": (0, 3),
+        "speed": (0, 3),
+        "life": (10, 20),
     },
     "Wolf": {
         "strength": (0, 3),

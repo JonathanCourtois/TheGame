@@ -3,6 +3,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
+import math
 from src.utils.random_generator import random_rarity, Rarity
 from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
 
@@ -176,7 +177,7 @@ class Entity:
         Calculate the Challenge Rating (CR) of the entity.
         CR is calculated as the sum of the average competence rolls and the half of the life.
         """
-        return int((self.constitution-1 + self.strength-1 + self.focus-1 + self.speed-1)/2 + (self.maxlife)/10)
+        return int((self.constitution-1 + self.strength-1 + self.focus-1 + self.level + self.speed-1 + self.maxlife/5) / 5)
     
     def displayed_name(self):
         """
@@ -189,7 +190,7 @@ class Entity:
         Roll a dice with a given number of sides.
         Returns the result of the roll.
         """
-        return random.randint(1, sides)
+        return random.randint(0, sides)
 
     def roll_n_d(self, n, sides):
         """
@@ -206,10 +207,10 @@ class Entity:
         hit     = self.roll_d(self.speed)
         crit    = True if self.roll_d(100) <= self.focus else False
         if crit:
-            damage  = self.roll_n_d(2, self.strength) 
+            damage  = self.roll_n_d(2, self.strength)+2 
             print(f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to {ctxt('Crit Hit!',Colors.RED)} for {ctxt(f'{damage:3d}',Colors.RED)} Damage !")
         else:
-            damage  = self.roll_d(self.strength)
+            damage  = self.roll_d(self.strength-1)+1
             print(f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to Hit for {ctxt(f'{damage:3d}',Colors.RED)} Damage !")
         return hit, damage
     
@@ -221,7 +222,6 @@ class Entity:
         const_check = self.roll_d(self.constitution)
         if hit > const_check:
             self.life -= damage
-            life_color = self.life_color()
             print(f"{self.displayed_name()} takes {ctxt(f'{damage:2d}',Colors.RED)} damage!")
             print(self.life_status())
 
@@ -252,7 +252,7 @@ class Entity:
         if self.life <= 0:
             return f"{name} is dead!"
         elif self.life < self.maxlife*0.2:
-            return f"{name} looks to really bad!"
+            return f"{name} looks really bad!"
         elif self.life < self.maxlife*0.5:
             return f"{name} looks wounded!"
         else:
@@ -348,7 +348,6 @@ class Entity:
         # Upgrade stats
         self.upgrade_stats(credit=total_credit)
         return self
-
 
 if __name__ == "__main__":
     entity = Entity()

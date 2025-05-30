@@ -2,6 +2,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import random
 from src.Object.character import Character
 from src.Object.monster import Monster
 from src.utils.display import ctxt, Colors
@@ -53,9 +54,9 @@ def fight(fighters_list:list):
                 if isinstance(fighter[0], Character):
                     action = input(f"\npress i to open inventory, f to flee or any other key to continue for {fighter[0].displayed_name()}\n")
                 elif isinstance(fighter[0], Monster):
-                    if fighter[0].life < fighter[0].maxlife / 3:
+                    if fighter[0].life < fighter[0].maxlife / 4:
                         flee_roll = fighter[0].roll_d(100)
-                        if flee_roll > fighter[0].life * 100 / fighter[0].maxlife:
+                        if flee_roll < fighter[0].life * 100 / fighter[0].maxlife:
                             action = "f"
 
                 if action == "i":
@@ -72,13 +73,22 @@ def fight(fighters_list:list):
     # Check which fighter has been defeated
     for i, fighter in enumerate(fighters):
         if fighter[0].life <= 0:
-            print(f"{fighter[0].name} has been {ctxt('defeated',Colors.RED)} by {fighters[1-i][0].name}!")
+            print(f"{fighter[0].displayed_name()} has been {ctxt('defeated',Colors.RED)} by {fighters[1-i][0].displayed_name()}!")
             # delete save file if it's a character
             if isinstance(fighter[0], Character):
                 fighter[0].delete_save_file()
                 exit()
             else:
                 print(f"{fighters[1-i][0].displayed_name()} wins the fight!")
+                won_gold = fighter[0].gold
+                xpc      = (4*fighter[0].level)**2
+                won_xp   = random.randint(int(xpc*0.1), int(xpc*0.3))
+                fighters[1-i][0].gold += won_gold
+                fighters[1-i][0].xp   += won_xp
+                if isinstance(fighters[1-i][0], Character):
+                    print(f"{fighters[1-i][0].displayed_name()} gained {ctxt(f'{won_gold}', Colors.YELLOW)} gold and {ctxt(f'{won_xp}', Colors.BLUE)} experience points!")  
+
+                fighters[1-i][0].Check_level()
             return
     print(f"{ctxt('ERROR', Colors.RED)}: Fight ended without a winner. This should not happen.")
     return
@@ -90,9 +100,9 @@ def fight_difficulty(character, monster):
     fair caracter cr is between monster cr - 2 and monster cr + 2
     hard caracter cr <= monster cr - 2
     """
-    if character.cr >= monster.cr + 2:
+    if character.cr >= monster.cr + 1:
         return "easy"
-    elif character.cr <= monster.cr - 2:
+    elif character.cr <= monster.cr - 1:
         return "hard"
     else:
         return "fair"
