@@ -1,37 +1,51 @@
+# -*- coding: utf-8 -*-
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import random
+from src.utils.random_generator import Rarity
 from src.Object.Entity import Entity
-import src.utils.rarity as Rarity
+from src.utils.display import ctxt, Colors
 
 class Item(Entity):
     """
     A class representing an item in the game.
     Inherits from the Entity class.
     """
-    def __init__(self, name, strength, speed, life, maxlife, price, level, xp, rarity):
-        super().__init__(strength, speed, life)
-        self.name       = name
-        self.maxlife    = maxlife
-        self.level      = level
-        self.gold       = price
-        self.xp         = xp
-        self.rarity     = rarity
+    def __init__(self):
+        self.name = "Item"
+        self.rarity         = Rarity.D
+
+        self.constitution   = 0 # for defense
+        self.strength       = 0 # for attack
+        self.focus          = 0 # for critical hit
+        self.speed          = 0
+        self.life           = 0
+        self.maxlife        = 0
+
+        self.level          = 0
+        self.maxlevel       = 20  
+        
+        self.cr             = 0
+        self.gold           = 0 # it's the price for the item, not the gold you get from it
+        self.xp             = 0
+        
+        self.gold_amount    = 0
+        self.affect         = []
+        self.chose          = []
     
-    def displayed_name(self):
+    def display_sheet(self, equipement=False, inventory=False, xp=False):
         """
-        Returns the name of the item.
+        Display the item stats in a sheet format.
+        format:
+        # HEADER #
+        # Stat 0 | #
+        # Stat 1 | #
+        # ...
+        # Stat n | #
         """
-        return Rarity.color_name_from_rarity(self.name, self.rarity)
-    
-    def display_stats(self, stats=""):
-        stats = f"Name:\t\t{self.displayed_name()}\n"
-        stats += f"Level:\t\t{self.level:3d}\n"
-        stats += f"Rarity:\t\t  {self.rarity.name}\n"
-        stats += f"Price:\t\t{self.gold:3d}\n"
-        stats += f"XP:\t\t{self.xp:3d}\n"
-        stats += f"MaxLife:\t{self.maxlife:3d}\n"
-        stats += f"Strength:\t{self.strength:3d}\n"
-        stats += f"Speed:\t\t{self.speed:3d}\n"
-        stats += f"Life:\t\t{self.life:3d}\n"
-        return stats
+        sheet = super().display_sheet(equipement=equipement, inventory=inventory, xp=xp)
+        return sheet
     
     def use_item(self, character):
         """
@@ -40,189 +54,96 @@ class Item(Entity):
         # Check if it's healing potion
         if self.life > 0:
             character.heal(self.life)
-            print(f"\n{self.displayed_name()} has been used! You healed {ctxt(f'{self.life}', Colors.GREEN)} health point!")
+            print(f"\n{self.displayed_name()} has been used! You gained {ctxt(f'{self.life}', Colors.GREEN)} health point!")
         # else it's stat potion
-        if self.strength > 0:
-            character.strength += self.strength
-            print(f"{self.displayed_name()} has been used! You gained {ctxt(f'{self.strength}', Colors.GREEN)} strength point!")
-        if self.speed > 0:
-            character.speed += self.speed
-            print(f"{self.displayed_name()} has been used! You gained {ctxt(f'{self.speed}', Colors.GREEN)} speed point!")
-        if self.maxlife > 0:
-            character.maxlife += self.maxlife
-            print(f"{self.displayed_name()} has been used! You gained {ctxt(f'{self.maxlife}', Colors.GREEN)} max life point!")
-            character.heal(character.maxlife)
+        if "chest" in self.name.lower():
+            print(f"\n{self.displayed_name()} has been opened!")
+        if self.gold_amount > 0:
+            character.gold += self.gold_amount
+            print(f"\nYou gained {ctxt(f'{self.gold_amount}', Colors.YELLOW)} gold!")
+        if self.xp > 0:
+            character.xp += self.xp
+            print(f"\nYou gained {ctxt(f'{self.xp}', Colors.BLUE)} experience points!") 
         # Remove the item from the inventory
         character.remove_from_inventory(self)
+        character.check_level()
         print(f"")
     
-    def save(self):
-        """
-        Save the item to a file.
-        """
-        save_data = {
-            "name": self.name,
-            "strength": self.strength,
-            "speed": self.speed,
-            "life": self.life,
-            "maxlife": self.maxlife,
-            "price": self.gold,
-            "level": self.level,
-            "xp": self.xp,
-            "rarity": self.rarity.name
-        }
-        return str(save_data)
-    
     @staticmethod
-    def load(save_data):
-        """
-        Load the item from a file.
-        """
-        save_data = eval(save_data)
-        rarity = Rarity.Rarity[save_data["rarity"]]
-        # Check if the item is a chest
-        if "chest" in save_data["name"]:
-            item = Chest(save_data["name"], save_data["strength"], save_data["speed"], save_data["life"], save_data["maxlife"], save_data["price"], save_data["level"], save_data["xp"], rarity)
-        else:
-            item = Item(save_data["name"], save_data["strength"], save_data["speed"], save_data["life"], save_data["maxlife"], save_data["price"], save_data["level"], save_data["xp"], rarity)
-        return item
-    
-    @staticmethod
-    def generate_random_item():
+    def generate_random_item(level:int = None, rarity:Rarity = None):
         """
         Generate a random item.
         """
-        name = random.choice(list(item_stat_list.keys()))
-        stats = item_stat_list[name]
-        rarity      = random_rarity()
-        level       = random.randint(stats["level"][0],     stats["level"][1])
-        stat_bias   = (level+stat_modifier(rarity))
+        item = Item()
+        name = random.choice(list(item_list.keys()))
+        item.name = name
+        item.affect = item_list[name]["affect"]
+        item.chose  = item_list[name]["chose"]
+        item.generate(level=level, rarity=rarity)
+        return item
+    
+    def upgrade_stats(self, credit=0):
+        """
+        Upgrade the stats of the item.
+        """
+        credit = 0 # unused parameter, can be used for future upgrades
+        if len(self.chose) > 0:
+            assert len(self.affect) == 0, "You can't have both affect and chose at the same time."
+            self.affect = [random.choice(self.chose)]
 
-        life        = random.randint(int(stats["life"][0]*stat_bias),
-                                     int(stats["life"][1]*stat_bias))
+        for stat in self.affect:
+            if stat == "life":
+                self.life = random.randint(self.rarity.value + self.level, self.rarity.value * 3 * self.level)
+            elif stat == "gold":
+                self.gold_amount = random.randint(self.rarity.value + self.level + 10, self.rarity.value * 30 * self.level)
+                # print(f"Gold amount set to {self.gold_amount} for item {self.name}")
+            elif stat == "xp":
+                self.xp = random.randint(self.rarity.value + self.level*4, (3*self.level)**2)
+                # print(f"XP set to {self.xp} for item {self.name}")
 
-        stat_bias   = (level+stat_modifier(rarity))
-        strength    = random.randint(int(stats["strength"][0]*stat_bias),  
-                                     int(stats["strength"][1]*stat_bias))
-        stat_bias   = (level+stat_modifier(rarity))
-        speed       = random.randint(int(stats["speed"][0]*stat_bias),     
-                                     int(stats["speed"][1]*stat_bias))
-        stat_bias   = (level+stat_modifier(rarity))
-        maxlife     = random.randint(int(stats["maxlife"][0]*stat_bias),   
-                                     int(stats["maxlife"][1]*stat_bias))
+        # Get the price !
+        all_stats_sum = self.life*10 + self.gold_amount + self.xp + self.level + self.rarity.value
+        self.gold = random.randint(int(all_stats_sum * 0.4), int(all_stats_sum * 1.4))
+        return
 
-        stat_bias   = (level+stat_modifier(rarity))
-        price       = random.randint(int(stats["price"][0]*stat_bias),     
-                                     int(stats["price"][1]*stat_bias))
-
-        xp          = random.randint(stats["xp"][0],        stats["xp"][1])
-        # Check if the item is a chest
-        if "chest" in name:
-            return Chest(name, strength, speed, life, maxlife, price, level, xp, rarity)
-        else:
-            return Item(name, strength, speed, life, maxlife, price, level, xp, rarity)
-
-item_stat_list = {
+item_list = {
     "Healing Potion": {
-        "strength": (0, 0),
-        "speed":    (0, 0),
-        "life":     (1, 10),
-        "maxlife":  (0, 0),
-        "price":    (4, 25),
-        "level":    (1, 1),
-        "xp":       (0, 0),
-        "rarity": Rarity.Rarity.D
+        "affect": ["life"],
+        "chose": [],
     },
-    "speed Potion": {
-        "strength": (0, 0),
-        "speed":    (0, 1),
-        "life":     (0, 0),
-        "maxlife":  (0, 0),
-        "price":    (100, 200),
-        "level":    (1, 5),
-        "xp":       (0, 0),
-        "rarity": Rarity.Rarity.D
+    "Gold Chest": {
+        "affect": ["gold"],
+        "chose": [],
     },
-    "strength Potion": {
-        "strength": (0, 1),
-        "speed":    (0, 0),
-        "life":     (0, 0),
-        "maxlife":  (0, 0),
-        "price":    (100, 200),
-        "level":    (1, 5),
-        "xp":       (0, 0),
-        "rarity": Rarity.Rarity.D
+    "XP Chest": {
+        "affect": ["xp"],
+        "chose": [],
     },
-    "Life Potion": {
-        "strength": (0, 0),
-        "speed":    (0, 0),
-        "life":     (0, 0),
-        "maxlife":  (0, 1),
-        "price":    (100, 200),
-        "level":    (1, 5),
-        "xp":       (0, 0),
-        "rarity": Rarity.Rarity.D
+    "Mystery Chest": {
+        "affect": [],
+        "chose": ["gold", "xp"],
     },
-    "Gold chest": {
-        "strength": (0, 0),
-        "speed":    (0, 0),
-        "life":     (0, 0),
-        "maxlife":  (0, 0),
-        "price":    (100, 200),
-        "level":    (1, 5),
-        "xp":       (0, 0),
-        "rarity": Rarity.Rarity.D
-    },
-    "Xp chest": {
-        "strength": (0, 0),
-        "speed":    (0, 0),
-        "life":     (0, 0),
-        "maxlife":  (0, 0),
-        "price":    (100, 200),
-        "level":    (1, 5),
-        "xp":       (0, 0),
-        "rarity": Rarity.Rarity.D
-    },
+    "Mastery Chest": {
+        "affect": ["gold", "xp"],
+        "chose": [],
+    }
+
 }
 
-class Chest(Item):
-    """
-    A class representing a chest in the game.
-    Inherits from the Item class.
-    """
-    def __init__(self, name, strength, speed, life, maxlife, price, level, xp, rarity):
-        super().__init__(name, strength, speed, life, maxlife, price, level, xp, rarity)
-        self.name = name
-        self.maxlife = maxlife
-        self.level = level
-        self.gold = price
-        self.xp = xp
-        self.rarity = rarity
-
-    def use_item(self, character):
-        """
-        Open the chest and give the loot to the character.
-        """
-        ### gold chest
-        if "Gold" in self.name:
-            stat_bias   = (self.level+stat_modifier(self.rarity))
-            min = 100*stat_bias
-            max = 200*stat_bias
-            gold = random.randint(min, max)
-            print(f"\n{self.name} contains {ctxt(f'{gold}', Colors.YELLOW)} gold!")
-            character.gold += gold
-
-        ### xp chest
-        elif "Xp" in self.name:
-            stat_bias   = (self.level+stat_modifier(self.rarity))
-            min = 10*stat_bias
-            max = 20*stat_bias
-            xp = random.randint(min, max)
-            print(f"\n{self.name} contains {ctxt(f'{xp}', Colors.BLUE)} XP!")
-            character.xp += xp
-        
-
-        print(f"{self.displayed_name()} has been Opened!\n")
-        # Remove the item from the inventory
-        character.remove_from_inventory(self)
-        
+if __name__ == "__main__":
+    item = Item()
+    print(item.display_sheet())
+    print(item.displayed_name())
+    
+    item = Item.generate_random_item()
+    print(item.display_sheet())
+    print(item.displayed_name())
+    item = Item.generate_random_item()
+    print(item.display_sheet())
+    print(item.displayed_name())
+    item = Item.generate_random_item()
+    print(item.display_sheet())
+    print(item.displayed_name())
+    item = Item.generate_random_item()
+    print(item.display_sheet())
+    print(item.displayed_name())
