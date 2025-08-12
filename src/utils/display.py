@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import msvcrt
+import time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import src.utils.random_generator as randgen
 
@@ -46,3 +48,21 @@ def color_from_rarity(rarity:randgen.Rarity):
         randgen.Rarity.D: Colors.RED,
     }
     return color[rarity]    
+
+def timed_input(prompt, timeout=1):
+    print(prompt, end='', flush=True)
+    start_time = time.time()
+    input_str = ''
+    while True:
+        if msvcrt.kbhit():
+            char = msvcrt.getwch()
+            if char == '\r':  # Enter key
+                # print()
+                return input_str
+            elif char == '\b':  # Backspace
+                input_str = input_str[:-1]
+            else:
+                input_str += char
+        if time.time() - start_time > timeout:
+            # print()  # Move to next line
+            return None

@@ -73,18 +73,18 @@ def stat_modifier(rarity):
         stat_mod += random.randint(0, 1)
     return stat_mod
 
-def gold_chest():
+def gold_chest(max_gold:int=10):
     """
-    Returns a random amount of gold between 0 and 10.
+    Returns a random amount of gold between 0 and max_gold, default is 10.
     """
-    return random.randint(0, 10)
+    return random.randint(1, max_gold)
 
-def heal_potion():
+def heal_potion(max_heal:int=10):
     """
-    Returns a random amount of heal potion between 1 and 10.
+    Returns a random amount of heal potion between 1 and max_heal, default is 10.
     """
-    return random.randint(1, 10)
-         
+    return random.randint(1, max_heal)
+
     
 def color_from_rarity(name, rarity):
     """

@@ -44,7 +44,7 @@ def main():
             # character.manage_inventory()
 
         elif action.lower() == 'e':
-            encounter_seed = random.random() + 0.3
+            encounter_seed = random.random() # Random seed for encounters
             if encounter_seed < 0.05: # Fight
                 print("You found a random monster!")
                 monster = Monster().generate()
