@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 import random
 from src.Object.character import Character
 from src.Object.monster import Monster
-from src.utils.display import ctxt, Colors
+from src.utils.display import ctxt, Colors, timed_input
 
 def fight(fighters_list:list):
     """
@@ -31,6 +31,8 @@ def fight(fighters_list:list):
 
     while all(entity.life > 0 for entity, _, _, _ in fighters):
         for i, fighter in enumerate(fighters):
+            action = ""
+            combat_log = "\n"
             fighter[1] += fighter[0].speed
             if fighter[1] >= max_speed:
                 fighter[1] -= max_speed
@@ -48,11 +50,15 @@ def fight(fighters_list:list):
                     else:
                         print(f"{fighter[0].displayed_name()} failed to flee!")
                 else:
-                    hit, damage = fighter[0].attack()
-                    fighters[1-i][0].defend(hit, damage)
+                    hit, damage, combat_log = fighter[0].attack()
+                    combat_log = fighters[1-i][0].defend(hit, damage, combat_log)
 
                 if isinstance(fighter[0], Character):
-                    action = input(f"\npress i to open inventory, f to flee or any other key to continue for {fighter[0].displayed_name()}\n")
+                    if not(combat_log == "" or combat_log == "\n"):
+                        print(combat_log)
+                        action = timed_input("\npress i to open inventory, f to flee or any other key to continue\n", timeout=1)
+                    # else:
+                        # action = timed_input("", timeout=1)
                 elif isinstance(fighter[0], Monster):
                     if fighter[0].life < fighter[0].maxlife / 4:
                         flee_roll = fighter[0].roll_d(100)
@@ -73,7 +79,7 @@ def fight(fighters_list:list):
     # Check which fighter has been defeated
     for i, fighter in enumerate(fighters):
         if fighter[0].life <= 0:
-            print(f"{fighter[0].displayed_name()} has been {ctxt('defeated',Colors.RED)} by {fighters[1-i][0].displayed_name()}!")
+            print(f"\n{fighter[0].displayed_name()} has been {ctxt('defeated',Colors.RED)} by {fighters[1-i][0].displayed_name()}!")
             # delete save file if it's a character
             if isinstance(fighter[0], Character):
                 fighter[0].delete_save_file()
@@ -88,7 +94,10 @@ def fight(fighters_list:list):
                 if isinstance(fighters[1-i][0], Character):
                     print(f"{fighters[1-i][0].displayed_name()} gained {ctxt(f'{won_gold}', Colors.YELLOW)} gold and {ctxt(f'{won_xp}', Colors.BLUE)} experience points!")  
 
-                fighters[1-i][0].Check_level()
+                if isinstance(fighters[1-i][0], Character):
+                    fighters[1-i][0].Check_level(randomize=False, debug=False)
+                else:
+                    fighters[1-i][0].Check_level(randomize=True, debug=False)
             return
     print(f"{ctxt('ERROR', Colors.RED)}: Fight ended without a winner. This should not happen.")
     return

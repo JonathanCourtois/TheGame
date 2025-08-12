@@ -204,31 +204,45 @@ class Entity:
         Simulate an attack.
         Returns a tuple of hit and damage.
         """
-        hit     = self.roll_d(self.speed)
-        crit    = True if self.roll_d(100) <= self.focus else False
-        if crit:
-            damage  = self.roll_n_d(2, self.strength)+2 
-            print(f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to {ctxt('Crit Hit!',Colors.RED)} for {ctxt(f'{damage:3d}',Colors.RED)} Damage !")
-        else:
-            damage  = self.roll_d(self.strength-1)+1
-            print(f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to Hit for {ctxt(f'{damage:3d}',Colors.RED)} Damage !")
-        return hit, damage
+        combat_log  = ""
+        hit         = self.roll_d(self.speed)
+        crit        = True if self.roll_d(100) <= self.focus else False
+        damage      = 0
+        if hit > 0:
+            if crit:
+                damage  = self.roll_n_d(2, self.strength)+2
+                combat_log += f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to {ctxt('Crit Hit!',Colors.RED)} for {ctxt(f'{damage:3d}',Colors.RED)} Damage !\n"
+            else:
+                damage  = self.roll_d(self.strength-1)+1
+                combat_log += f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to Hit for {ctxt(f'{damage:3d}',Colors.RED)} Damage !\n"
+        return hit, damage, combat_log
     
-    def defend(self, hit, damage):
+    def defend(self, hit, damage, combat_log=""):
         """
         Simulate defending against an attack.
         If the hit is greater than the CA, reduce life by damage.
         """
         const_check = self.roll_d(self.constitution)
-        if hit > const_check:
+        combat_log  = combat_log
+        
+        if hit == 0:
+            combat_log  = ""
+            return combat_log
+        
+        elif hit > const_check:
             self.life -= damage
-            print(f"{self.displayed_name()} takes {ctxt(f'{damage:2d}',Colors.RED)} damage!")
-            print(self.life_status())
+            combat_log += f"{self.displayed_name()} takes {ctxt(f'{damage:2d}',Colors.RED)} damage!\n"
+            combat_log += self.life_status()
 
-        elif hit < const_check/2:
-            print(f"{self.displayed_name()} dodges the attack!\n")
+        proba_display = random.random()
+        if hit < const_check/2 and proba_display < 0.5:
+            combat_log += f"{self.displayed_name()} dodges the attack!\n"
+        elif proba_display < 0.5:
+            combat_log += f"{self.displayed_name()} blocks the attack!\n"
         else:
-            print(f"{self.displayed_name()} blocks the attack!\n")
+            combat_log  = ""
+        
+        return combat_log
 
     def life_color(self):
         """
@@ -250,13 +264,13 @@ class Entity:
         else:
             name = ""
         if self.life <= 0:
-            return f"{name} is dead!"
+            return f"{name} is dead!\n"
         elif self.life < self.maxlife*0.2:
-            return f"{name} looks really bad!"
+            return f"{name} looks really bad!\n"
         elif self.life < self.maxlife*0.5:
-            return f"{name} looks wounded!"
+            return f"{name} looks wounded!\n"
         else:
-            return f"{name} looks to handle it!"
+            return f"{name} looks to handle it!\n"
 
     def heal(self, amount):
         """
@@ -277,7 +291,7 @@ class Entity:
         rename_display += f"{self.displayed_name()} !"
         print(rename_display)
 
-    def Check_level(self):
+    def Check_level(self, randomize=False, debug=False):
         """
         Check the xp and set the level of the entity
         Give one credit to upgrade stats per level until max level.
@@ -289,33 +303,52 @@ class Entity:
                 return
             self.level += 1
             print(f"{self.displayed_name()} leveled up! New level: {self.level}")
-            self.upgrade_stats(credit=1)
+            self.upgrade_stats(credit=1, randomize=randomize, debug=debug)
         return 
     
-    def gain_xp(self, xp):
+    def gain_xp(self, xp, randomize=False, debug=False):
         """
         Gain xp and check if the entity levels up.
         """
         self.xp += xp
         print(f"{self.displayed_name()} gained {xp} XP!")
-        self.Check_level()
+        self.Check_level(randomize=randomize, debug=debug)
 
-    def upgrade_stats(self, credit=1, debug=False):
+    def upgrade_stats(self, credit=1, randomize=False, debug=False):
         """
         Upgrade the entity's stats.
         Allows the entity to upgrade n stats randomly.
         """
+        stats = {1: "constitution", 2: "strength", 3: "focus", 4: "speed", 5: "maxlife"}
         while credit > 0:
-            stat = random.choice(["constitution", "strength", "focus", "speed", "maxlife"])
-            if stat == "constitution":
+            if randomize:
+                action = random.randint(1, 5)
+                if debug:
+                    print(f"{self.displayed_name()} randomly chose to upgrade {stats[action]}!")
+            else:
+                print(f"\n{self.display_sheet(equipement=True, inventory=True, xp=True)}")
+                print(f"{self.displayed_name()} has {credit} upgrade credits left.")
+                print("Available stats to upgrade:")
+                for i, stat in stats.items():
+                    print(f"{i} - {stat}")
+                action = input("Enter the number of the stat you want to upgrade: ")
+                try:
+                    action = int(action)
+                    if action < 1 or action > 5:
+                        print("Invalid input. Please enter a number between 1 and 5.")
+                        continue
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+                    continue
+            if action == 1:
                 self.constitution += 1
-            elif stat == "strength":
+            elif action == 2:
                 self.strength += 1
-            elif stat == "focus":
+            elif action == 3:
                 self.focus += 1
-            elif stat == "speed":
+            elif action == 4:
                 self.speed += 1
-            elif stat == "maxlife":
+            elif action == 5:
                 self.maxlife    += 10
                 self.life       += 10
             credit -= 1
@@ -346,7 +379,7 @@ class Entity:
 
         total_credit = rarity_credit + level_credit
         # Upgrade stats
-        self.upgrade_stats(credit=total_credit)
+        self.upgrade_stats(credit=total_credit, randomize=True, debug=False)
         return self
 
 if __name__ == "__main__":
