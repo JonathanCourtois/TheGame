@@ -24,7 +24,7 @@ def main():
 
     # Start the game loop (placeholder for now)
     while True:
-        action = input("\nWhat would you like to do? (s: stats, i: inventory, e: explore, rename: rename character, exit: exit) ")
+        action = input("\nWhat would you like to do? (s: stats, i: inventory, e: explore, r: rest, rename: rename character, exit: exit) ")
         print("")
         if action.lower() == 'exit':
             character.save()
@@ -42,6 +42,11 @@ def main():
         elif action.lower() == 'i':
             print(f"{dsp.ctxt('ERROR', dsp.Colors.RED)}: Inventory management is not implemented yet.")
             # character.manage_inventory()
+
+        elif action.lower() == 'r':
+            rest_heal = randgen.heal_potion(max_heal=3)-1
+            character.heal(rest_heal)
+            print(f"You rested and recovered {dsp.ctxt(f'{rest_heal}', dsp.Colors.GREEN)} health!")
 
         elif action.lower() == 'e':
             encounter_seed = random.random() # Random seed for encounters
