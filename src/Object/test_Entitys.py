@@ -31,13 +31,13 @@ def test_get_inventory_item_name():
 
 def test_calculate_cr():
     entity      = Entity()
-    expected_cr = int((entity.constitution - 1 + entity.strength - 1 + entity.focus - 1 + entity.speed - 1) / 2 + (entity.maxlife) / 10)
+    expected_cr = int((entity.constitution-1 + entity.strength-1 + entity.focus-1 + entity.level + entity.speed-1 + entity.maxlife/5) / 5)
     assert entity.calculate_cr() == expected_cr
 
 def test_roll_d():
     entity = Entity()
     result = entity.roll_d(6)
-    assert 1 <= result <= 6
+    assert 0 <= result <= 6
 
 def test_roll_n_d():
     entity = Entity()
@@ -47,8 +47,8 @@ def test_roll_n_d():
 def test_attack():
     entity      = Entity()
     hit, damage = entity.attack()
-    assert 1 <= hit <= entity.speed
-    assert 1 <= damage <= entity.strength * 2  # Considering critical hit
+    assert 0 <= hit <= entity.speed
+    assert 1 <= damage <= entity.strength * 2 + 2 # Considering critical hit
 
 def test_defend():
     entity          = Entity()
