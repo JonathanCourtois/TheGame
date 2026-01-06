@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
 import sys
+import select
 import os
-import msvcrt
 import time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import src.utils.random_generator as randgen
+
+from platform import system
+if system() == 'Windows':
+    from msvcrt import getwch, kbhit
+else:
+    def getch():
+        ch = sys.stdin.read(1)
+        return ch
+
+    def kbhit():
+        results = select.select([sys.stdin], [], [], 0)
+        return results[0] != []
 
 class Colors:
     RESET = "\033[0m"
@@ -54,8 +66,9 @@ def timed_input(prompt, timeout=1):
     start_time = time.time()
     input_str = ''
     while True:
-        if msvcrt.kbhit():
-            char = msvcrt.getwch()
+        if kbhit():
+            # char = msvcrt.getwch()
+            char = getwch()
             if char == '\r':  # Enter key
                 # print()
                 return input_str

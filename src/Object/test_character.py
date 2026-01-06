@@ -19,6 +19,9 @@ def test_character_initialization():
     assert entity.cr            == entity.calculate_cr()
     assert entity.gold          == 0
     assert entity.xp            == 0
+    assert entity.inventory     == []
+    for key in entity.equipment.keys():
+        assert entity.equipment[key] == None
 
 def test_generate():
     for i in range(10):
@@ -83,6 +86,16 @@ def test_displayed_name():
     entity.name = "Hero"
     displayed_name = entity.displayed_name()
     assert displayed_name == "\x1b[1;31mHero\x1b[0m"
+
+def test_life_status():
+    entity = Character().generate(level=1, rarity=Rarity.D)
+    assert "looks to handle it" in entity.life_status()
+
+    entity.life = entity.maxlife*0.49
+    assert "looks wounded" in entity.life_status()
+
+    entity.life = entity.maxlife*0.19
+    assert "looks really bad" in entity.life_status()
 
 
         

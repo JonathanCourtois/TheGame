@@ -54,6 +54,35 @@ TheGame-0.0.1/
 - Characters are deleted upon death, but you can restart with a new character.
 - Enjoy the roguelike experience with endless replayability.
 
+## Work in Progress
+This game is at a work in progress state.
+
+Working on :
+- add merchant <- on it 
+- - buy features [] working but player issue with inventory
+- - sell features [] Not yet implemented
+
+- add inventory items basics 
+- - healing potion [] need debbug
+- - Gold chest [] need debbug
+- - Xp potion  [] need debbug
+
+- Balancing
+
+futur works :
+- add equipement items basics
+- - Weapon
+- - body armor
+- - Neck
+- - Belt
+- - Rings
+
+- Monster save and level up when player defeat
+
+- achivement title
+
+- WipeOut
+
 ## Contributing
 Contributions are welcome! If you have suggestions or improvements, feel free to:
 - Submit a pull request.
