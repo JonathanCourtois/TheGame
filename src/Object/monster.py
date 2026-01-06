@@ -18,12 +18,6 @@ class Monster(Entity):
         self.inventory = []
         self.equipment = {'head': None, 'body': None, 'legs': None, 'feet': None, 'left hand': None, 'right hand': None, 'neck': None, 'ring1': None, 'ring2': None, 'belt': None}
 
-    def display_stats(self, stats=""):
-        print(f"Deprecated method display_stats, use display_sheet instead.")
-        stats = f"Name:\t\t{self.name}\n"
-        stats = super().display_stats(stats)
-        return stats
-
     def display_sheet(self, equipement=False, inventory=False, xp=False):
         """
         Display the character stats in a sheet format.

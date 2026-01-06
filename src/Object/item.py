@@ -82,7 +82,7 @@ class Item(Entity):
         item.generate(level=level, rarity=rarity)
         return item
     
-    def upgrade_stats(self, credit=0):
+    def upgrade_stats(self, credit=0, randomize=False, debug=False):
         """
         Upgrade the stats of the item.
         """

@@ -1,9 +1,9 @@
 import random
 from src.Object.character import Character
 from src.Object.monster import Monster
+from src.utils.merchant import Merchant
 import src.utils.random_generator as randgen
 import src.utils.fight as fight
-# import src.utils.merchant as Merchant
 import src.utils.display as dsp
 import os
 
@@ -45,25 +45,33 @@ def main():
 
         elif action.lower() == 'e':
             encounter_seed = random.random() # Random seed for encounters
-            if encounter_seed < 0.05: # Fight
+
+            if encounter_seed < 0.0: # Fight 0.05
                 print("You found a random monster!")
-                monster = Monster().generate()
-                fight.fight([character, monster])
+            #     monster = Monster().generate()
+            #     print(f"{monster.display_sheet()}")
+            #     fight.fight([character, monster])
 
-            elif encounter_seed < 0.3:
-                gold = randgen.gold_chest()
-                print(f"You found {dsp.ctxt(f'{gold}',dsp.Colors.YELLOW)} gold!")
-                character.gold += gold
+            # elif encounter_seed < 0.2:
+            #     gold = randgen.rand_gold(max_gold=8+int(character.level*2))
+            #     print(f"You found {dsp.ctxt(f'{gold}',dsp.Colors.YELLOW)} gold!")
+            #     character.gold += gold
 
-            elif encounter_seed < 0.6:
-                print("You found a healing potion!")
-                heal_potion = randgen.heal_potion()
-                character.heal(heal_potion)
+            # elif encounter_seed < 0.4:
+            #     print("You found a healing plant!")
+            #     some_life = randgen.get_heal()
+            #     character.heal(some_life)
 
-            elif encounter_seed < 0.8:
+            # elif encounter_seed < 0.6:
+            #     print("You found nothing in this peacfull world.")
+
+            # elif encounter_seed < 0.8:
+            elif encounter_seed < 1.2:
                 print("You found a merchant!")
+                merchant = Merchant().generate(character)
+                merchant.trade(character)
                 print(f"{dsp.ctxt('ERROR', dsp.Colors.RED)}: merchant is not implemented yet.")
-                # merchant = Merchant(character)
+
             else:
                 print("You encountered a monster!")
                 monster = Monster().generate_ranged(character, range=character.level-1)
@@ -81,7 +89,7 @@ def main():
                     print("Level must be greater than 0.")
             except ValueError:
                 print("Invalid input. Please enter a number.")
-        elif action.lower() == 'gold': # debug
+        elif action.lower() == 'motherload': # debug
             action = input("Enter the amount of gold you want to add: ")
             try:
                 gold = int(action)
