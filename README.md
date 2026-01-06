@@ -77,6 +77,7 @@ futur works :
 - - Belt
 - - Rings
 
+- Rework save system
 - Monster save and level up when player defeat
 
 - achivement title
