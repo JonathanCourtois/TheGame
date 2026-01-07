@@ -58,18 +58,9 @@ TheGame-0.0.1/
 This game is at a work in progress state.
 
 Working on :
-- add merchant <- on it 
-- - buy features [] working but player issue with inventory
-- - sell features [] Not yet implemented
-
-- add inventory items basics 
-- - healing potion [] need debbug
-- - Gold chest [] need debbug
-- - Xp potion  [] need debbug
 
 - Balancing
 
-futur works :
 - add equipement items basics
 - - Weapon
 - - body armor
@@ -77,7 +68,10 @@ futur works :
 - - Belt
 - - Rings
 
+futur works :
 - Rework save system
+- merchant Money Limit
+
 - Monster save and level up when player defeat
 
 - achivement title

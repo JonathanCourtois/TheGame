@@ -61,7 +61,7 @@ class Merchant(Character):
             self.dialogue()
 
         if action.lower() == 's':
-            print(f"{ctxt('Sell Not implemented yet.',Colors.RED)}")
+            self.sell_item()
             self.dialogue()
             
         elif action.lower() == 'e':
@@ -80,6 +80,47 @@ class Merchant(Character):
             print("Invalid index.")
             return
         item = self.store[item_index]
+        if self.customer.gold > item.gold:
+            if len(self.customer.inventory) >= 4:
+                print("You can't carry more than 4 items.")
+            else:
+                print(f"You bought {item.name} for {item.gold} gold.")
+                # Add the item to the character's inventory
+                self.customer.inventory.append(item)
+                # character.inventory.append(item)
+                # Remove the item from the store
+                self.store.pop(item_index)
+                self.customer.gold -= item.gold
+                print(f"You have {ctxt(f'{self.customer.gold}',Colors.YELLOW)} gold left.")
+        else:
+            print("You don't have enough gold.")
+
+        return
+    
+    def sell_item(self):
+        """
+        sell an item from the character inventory.
+        """
+        if len(self.customer.inventory) <= 0:
+            print(f"You have {ctxt('nothing',Colors.RED)} to sell.")
+            return
+        
+        print("Inventory:\n")
+        print(self.customer.display_inventory())
+        item_index = int(input("Enter the index of the item you want to sell: "))
+
+        if item_index < 0 or item_index >= len(self.customer.inventory):
+                print("Invalid index.")
+                return
+        item = self.customer.inventory[item_index]
+        
+        self.customer.remove_from_inventory(item)
+        print(f"\n{item.displayed_name()} has been sell from your inventory for {item.gold} gold.")
+        self.customer.gold += item.gold
+        print(f"You have {ctxt(f'{self.customer.gold}',Colors.YELLOW)} gold left.")
+
+        return
+        ## need to add -> mony for the merchant
         if self.customer.gold > item.gold:
             if len(self.customer.inventory) >= 4:
                 print("You can't carry more than 4 items.")
