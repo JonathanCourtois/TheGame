@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
 import math
+import re
 from src.utils.random_generator import random_rarity, Rarity
 from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
 
@@ -160,7 +161,8 @@ class Entity:
             list_idx = 0
             for i in range(2):
                 for j in range(2):
-                    inventory += f"# [{self.get_inventory_item_name(list_idx):^{ip}s}] #"
+                    name = self.get_inventory_item_name(list_idx)
+                    inventory += f"# [{self._center_ansi(name, ip)}] #"
                     list_idx += 1
                     if j == 0:
                         inventory += " "
@@ -181,14 +183,28 @@ class Entity:
         """
         return int((self.constitution-1 + self.strength-1 + self.focus-1 + self.level + self.speed-1 + self.maxlife/5) / 5)
     
-    def displayed_name(self, left=False):
+    def displayed_name(self):
         """
         Returns the name of the entity.
         """
-        if left:
-            return color_text_from_rarity(f'{self.name:<20s}', self.rarity)
-        else:
-            return color_text_from_rarity(f'{self.name:>20s}', self.rarity)
+        return color_text_from_rarity(f'{self.name}', self.rarity)
+
+    def _strip_ansi(self, s: str) -> str:
+        """Return the string with ANSI escape sequences removed (for width calculation)."""
+        return re.sub(r'\x1b\[[0-9;]*m', '', s)
+
+    def _center_ansi(self, s: str, width: int) -> str:
+        """
+        Center a possibly-colored string according to its visible length.
+        Preserves ANSI escapes.
+        """
+        visible = self._strip_ansi(s)
+        if len(visible) >= width:
+            return s
+        pad_total = width - len(visible)
+        left = pad_total // 2
+        right = pad_total - left
+        return ' ' * left + s + ' ' * right
 
     def roll_d(self, sides):
         """

@@ -78,7 +78,7 @@ class Character(Entity):
         Get the name of the item in the inventory at the given index.
         """
         if index < len(self.inventory):
-            return self.inventory[index].displayed_name()
+            return self.inventory[index].displayed_name().strip()
         else:
             return 'Empty'
 

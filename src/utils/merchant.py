@@ -44,7 +44,7 @@ class Merchant(Character):
         """
         print(f"{self.name}'s lvl {self.level} Store:")
         for i, item in enumerate(self.store):
-            print(f"ID : {i:2d} : {item.displayed_name(left=True)} : lvl {item.level:2d} : {item.rarity.name} : {item.gold} gold")
+            print(f"ID : {i:2d} : {item.displayed_name():<25s} : lvl {item.level:2d} : {item.rarity.name} : {item.gold} gold")
 
     def dialogue(self):
         """

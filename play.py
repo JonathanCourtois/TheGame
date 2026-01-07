@@ -44,7 +44,7 @@ def main():
             # character.manage_inventory()
 
         elif action.lower() == 'r':
-            rest_heal = randgen.heal_potion(max_heal=3)-1
+            rest_heal = randgen.get_heal(max_heal=3)-1
             character.heal(rest_heal)
             print(f"You rested and recovered {dsp.ctxt(f'{rest_heal}', dsp.Colors.GREEN)} health!")
 
@@ -75,7 +75,6 @@ def main():
                 print("You found a merchant!")
                 merchant = Merchant().generate(character)
                 merchant.trade(character)
-                print(f"{dsp.ctxt('ERROR', dsp.Colors.RED)}: merchant is not implemented yet.")
 
             else:
                 print("You encountered a monster!")
