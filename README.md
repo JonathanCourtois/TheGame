@@ -59,6 +59,8 @@ This game is at a work in progress state.
 
 Working on :
 
+- fight to debug
+
 - Balancing
 
 - add equipement items basics
