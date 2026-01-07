@@ -40,8 +40,8 @@ def main():
             print(f"Character Stats:\n{character.display_sheet()}")
 
         elif action.lower() == 'i':
-            print(f"{dsp.ctxt('ERROR', dsp.Colors.RED)}: Inventory management is not implemented yet.")
-            # character.manage_inventory()
+            print(f"{dsp.ctxt('WARNING', dsp.Colors.RED)}: Inventory management is work in progress.")
+            character.manage_inventory()
 
         elif action.lower() == 'r':
             rest_heal = randgen.get_heal(max_heal=3)-1

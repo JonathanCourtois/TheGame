@@ -66,7 +66,7 @@ class Item(Entity):
             print(f"\nYou gained {ctxt(f'{self.xp}', Colors.BLUE)} experience points!") 
         # Remove the item from the inventory
         character.remove_from_inventory(self)
-        character.check_level()
+        character.Check_level()
         print(f"")
     
     @staticmethod

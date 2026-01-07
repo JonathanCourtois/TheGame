@@ -5,6 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from src.utils.random_generator import random_rarity, Rarity
 from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
 from src.Object.Entity import Entity
+from src.Object.item import Item
 import pickle as pkl
  
 class Character(Entity):
@@ -104,11 +105,11 @@ class Character(Entity):
         Allows droping, using and equipping items.
         """
         print("Inventory Management:\n")
-        self.display_inventory_name_only()
+        print(self.display_inventory())
         action = input("What would you like to do? (s: show item stats, d: drop, e: equip, u: use, x: unequip, q: quit) ")
 
         if action.lower() == 's':
-            self.display_inventory()
+            print(self.display_inventory())
 
         elif action.lower() == 'd':
             item_index = int(input("\nEnter the index of the item you want to drop: "))
@@ -155,7 +156,7 @@ class Character(Entity):
         Use an item from the inventory.
         """
         if item in self.inventory:
-            if isinstance(item, Item) or isinstance(item, Chest):
+            if isinstance(item, Item) : #or isinstance(item, Chest):
                 if item.level > self.level:
                     print(f"{item.displayed_name()} is too high level for you!\n")
                 else:
