@@ -51,27 +51,26 @@ def main():
         elif action.lower() == 'e':
             encounter_seed = random.random() # Random seed for encounters
 
-            if encounter_seed < 0.0: # Fight 0.05
+            if encounter_seed < 0.05: # Fight 0.05
                 print("You found a random monster!")
-            #     monster = Monster().generate()
-            #     print(f"{monster.display_sheet()}")
-            #     fight.fight([character, monster])
+                monster = Monster().generate()
+                print(f"{monster.display_sheet()}")
+                fight.fight([character, monster])
 
-            # elif encounter_seed < 0.2:
-            #     gold = randgen.rand_gold(max_gold=8+int(character.level*2))
-            #     print(f"You found {dsp.ctxt(f'{gold}',dsp.Colors.YELLOW)} gold!")
-            #     character.gold += gold
+            elif encounter_seed < 0.2:
+                gold = randgen.rand_gold(max_gold=8+int(character.level*2))
+                print(f"You found {dsp.ctxt(f'{gold}',dsp.Colors.YELLOW)} gold!")
+                character.gold += gold
 
-            # elif encounter_seed < 0.4:
-            #     print("You found a healing plant!")
-            #     some_life = randgen.get_heal()
-            #     character.heal(some_life)
+            elif encounter_seed < 0.4:
+                print("You found a healing plant!")
+                some_life = randgen.get_heal()
+                character.heal(some_life)
 
-            # elif encounter_seed < 0.6:
-            #     print("You found nothing in this peacfull world.")
+            elif encounter_seed < 0.6:
+                print("You found nothing in this peacefull world.")
 
-            # elif encounter_seed < 0.8:
-            elif encounter_seed < 1.2:
+            elif encounter_seed < 0.8:
                 print("You found a merchant!")
                 merchant = Merchant().generate(character)
                 merchant.trade(character)
