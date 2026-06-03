@@ -82,9 +82,9 @@ class Merchant(Character):
         item = self.store[item_index]
         if self.customer.gold > item.gold:
             if len(self.customer.inventory) >= 4:
-                print("You can't carry more than 4 items.")
+                print(f"{ctxt("You can't carry more than 4 items.",Colors.RED)}")
             else:
-                print(f"You bought {item.name} for {item.gold} gold.")
+                print(f"You bought {item.displayed_name()} for {ctxt(f'{item.gold}',Colors.YELLOW)} gold.")
                 # Add the item to the character's inventory
                 self.customer.inventory.append(item)
                 # character.inventory.append(item)
@@ -115,7 +115,7 @@ class Merchant(Character):
         item = self.customer.inventory[item_index]
         
         self.customer.remove_from_inventory(item)
-        print(f"\n{item.displayed_name()} has been sell from your inventory for {item.gold} gold.")
+        print(f"\n{item.displayed_name()} has been sell from your inventory for {ctxt(f'{item.gold}',Colors.YELLOW)} gold.")
         self.customer.gold += item.gold
         print(f"You have {ctxt(f'{self.customer.gold}',Colors.YELLOW)} gold left.")
 

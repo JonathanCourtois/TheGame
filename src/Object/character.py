@@ -142,8 +142,11 @@ class Character(Entity):
     def add_to_inventory(self, item):
         if len(self.inventory) < 4:
             self.inventory.append(item)
+            print(f"{item.displayed_name()} Added to your inventory")
+            return True
         else:
             print("Inventory is full!\n")
+            return False
 
     def remove_from_inventory(self, item):
         if item in self.inventory:

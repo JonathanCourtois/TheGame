@@ -49,8 +49,6 @@ def random_rarity():
     )[0]
     return rarity
 
-
-
 def generate_character():
     from src.Object.character import Character
 
@@ -85,7 +83,6 @@ def get_heal(max_heal:int=10):
     """
     return random.randint(1, max_heal)
 
-    
 def color_from_rarity(name, rarity):
     """
     Returns a colored name based on the rarity.
@@ -98,3 +95,8 @@ def color_from_rarity(name, rarity):
         Rarity.D: "\033[1;31m",  # Red
     }
     return f"{color[rarity]}{name}\033[0m"
+
+def generate_item(level:int = None, rarity:Rarity = None):
+    from src.Object.item import Item
+
+    return Item.generate_random_item(level = level, rarity = rarity)

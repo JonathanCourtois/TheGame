@@ -40,7 +40,6 @@ def main():
             print(f"Character Stats:\n{character.display_sheet()}")
 
         elif action.lower() == 'i':
-            print(f"{dsp.ctxt('WARNING', dsp.Colors.RED)}: Inventory management is work in progress.")
             character.manage_inventory()
 
         elif action.lower() == 'r':
@@ -92,6 +91,7 @@ def main():
                     print("Level must be greater than 0.")
             except ValueError:
                 print("Invalid input. Please enter a number.")
+        
         elif action.lower() == 'motherload': # debug
             action = input("Enter the amount of gold you want to add: ")
             try:
@@ -103,16 +103,20 @@ def main():
                     print("Gold must be greater than 0.")
             except ValueError:
                 print("Invalid input. Please enter a number.")  
+        
+        elif action.lower() == 'merchant': # debug
+            print("You found a merchant!")
+            merchant = Merchant().generate(character)
+            merchant.trade(character)
+        
         elif action.lower() == 'spawn item': # debug
             item = randgen.generate_item()
             character.add_to_inventory(item)
-            print(f"Spawned item: {item.displayed_name()}")
 
         elif action.lower() == 'rg': # debug
             character = randgen.generate_character()
             print(f"New Character Stats:\n{character.display_stats()}")
 
-        
         else:
             print("Action not recognized. Please try again.")
 
