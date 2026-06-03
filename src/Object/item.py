@@ -33,6 +33,15 @@ class Item(Entity):
         self.gold_amount    = 0
         self.affect         = []
         self.chose          = []
+
+        self.equipable      = False
+        self.usable         = True
+    
+    def isusable(self):
+        return self.usable
+    
+    def isequipable(self):
+        return self.equipable
     
     def display_sheet(self, equipement=False, inventory=False, xp=False):
         """

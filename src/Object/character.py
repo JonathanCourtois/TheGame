@@ -121,7 +121,15 @@ class Character(Entity):
             print(f"\n{item.displayed_name()} has been dropped from your inventory.")
 
         elif action.lower() == 'e':
-            print("Not implemented yet.")
+            item_index = int(input("\nEnter the index of the item you want to use: "))
+            if item_index < 0 or item_index >= len(self.inventory):
+                print("Invalid index.")
+                return
+            item = self.inventory[item_index]
+            if item.isequipable() :
+                print("Not implemented yet.")
+            else :
+                print(f"This item can't be equiped")
         
         elif action.lower() == 'u':
             item_index = int(input("\nEnter the index of the item you want to use: "))
@@ -129,7 +137,10 @@ class Character(Entity):
                 print("Invalid index.")
                 return
             item = self.inventory[item_index]
-            self.use_item(item)
+            if item.isusable() :
+                self.use_item(item)
+            else :
+                print(f"This item can't be used")
 
         elif action.lower() == 'x':
             print("Not implemented yet.")
