@@ -12,9 +12,9 @@
 | Clean the main game loop: validate action choices | [x] |
 | Clean the main game loop: avoid repeated or broken prompts | [x] |
 | Clean the main game loop: improve user feedback and error handling | [x] |
-| Fix save system: create a consistent save file structure | [ ] |
+| Fix save system: create a consistent save file structure | [x] |
 | Fix save system: define save behavior for character creation, overwrite, delete, and loading | [x] |
-| Fix save system: avoid accidental deletion or invalid state | [ ] |
+| Fix save system: avoid accidental deletion or invalid state | [x] |
 | Validate character progression: level-up logic | [x] |
 | Validate character progression: XP gain and thresholds | [x] |
 | Validate character progression: health restoration and death state | [x] |
