@@ -14,16 +14,15 @@ The Game is a character-based adventure game where players can generate unique c
 ```
 TheGame-0.0.1/
 ├── src/
-│   ├── main.py          # Entry point for the game
-│   ├── character.py     # Character generation and management
-│   ├── inventory.py     # Inventory system
-│   ├── equipment.py     # Equipment management
-│   ├── rarity.py        # Rarity class definitions
-│   ├── game.py          # Core game logic
-│   └── utils.py         # Utility functions
+|   ├── Object/
+|   |   └── ...
+|   ├── utils/
+|   |   └── ...
+|   └── ...
 ├── play.py              # Script to start the game
 ├── requirements.txt     # Python dependencies
 ├── README.md            # Project documentation
+└── ...
 ```
 
 ## Getting Started
