@@ -23,19 +23,19 @@ Phase 1 – Stabilize the core loop (priority 1)
 Goal: Make the game reliable and playable from start to finish.
 
 Tasks:
-- Fix combat flow bugs:
+- Fix combat flow bugs: - OK -
   - ensure the winner is always determined correctly
-  - stop unintended exits or early termination
+  - stop unintended exits or early termination 
   - validate turns, flee logic, and inventory actions during combat
-- Clean the main game loop:
+- Clean the main game loop: - OK -
   - validate action choices
   - avoid repeated or broken prompts
   - improve user feedback and error handling
-- Fix save system:
+- Fix save system: - WIP -
   - create a consistent save file structure
   - define save behavior for character creation, overwrite, delete, and loading
   - avoid accidental deletion or invalid state
-- Validate character progression:
+- Validate character progression: - OK -
   - level-up logic
   - XP gain and thresholds
   - health restoration and death state
