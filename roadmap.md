@@ -103,3 +103,4 @@
 4. Add more content and enemy variety
 5. Refactor and polish for release
 
+# Project Rules for balance :

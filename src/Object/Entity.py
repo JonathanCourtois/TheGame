@@ -16,7 +16,7 @@ class Entity:
         self.constitution   = 1 # for defense
         self.strength       = 1 # for attack
         self.focus          = 1 # for critical hit
-        self.speed          = 1
+        self.speed          = 1 # for speed
         self.life           = 10
         self.maxlife        = 10
 
@@ -179,9 +179,9 @@ class Entity:
     def calculate_cr(self):
         """
         Calculate the Challenge Rating (CR) of the entity.
-        CR is calculated as the sum of the average competence rolls and the half of the life.
+        CR is calculated as the sum of the average competence rolls and the life.
         """
-        return int((self.constitution-1 + self.strength-1 + self.focus-1 + self.level + self.speed-1 + self.maxlife/5) / 5)
+        return int((self.constitution + self.strength + self.focus + self.level + self.speed + self.maxlife/10) / 6)
     
     def displayed_name(self):
         """
