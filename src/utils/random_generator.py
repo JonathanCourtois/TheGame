@@ -100,3 +100,8 @@ def generate_item(level:int = None, rarity:Rarity = None):
     from src.Object.item import Item
 
     return Item.generate_random_item(level = level, rarity = rarity)
+
+def generate_equipement(level:int = None, rarity:Rarity = None, type:str = None):
+    from src.Object.equipement import Equipement
+
+    return Equipement.generate_random_equipement(level = level, rarity = rarity, type = type)
