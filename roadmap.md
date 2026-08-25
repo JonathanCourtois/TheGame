@@ -24,19 +24,15 @@
 
 | Task | Status |
 | --- | --- |
-| Implement equipment slots properly: weapon | [ ] |
-| Implement equipment slots properly: body armor | [ ] |
-| Implement equipment slots properly: head/helmet | [ ] |
-| Implement equipment slots properly: belt | [ ] |
-| Implement equipment slots properly: neck | [ ] |
-| Implement equipment slots properly: rings | [ ] |
-| Implement equipment slots properly: boots | [ ] |
-| Implement equipment slots properly: gloves/arms | [ ] |
+| Display equipment slots : Head, Body, Legs, Feet, right/left Hand, Neck, Belt, Rings | [x] |
+| Generate blank item | [x] |
+| Add / Remove item to character inventory | [x] |
+| Create equipment generation rules by rarity and level | [x] |
 | Add equip / unequip actions to the character inventory flow | [ ] |
 | Add stat bonuses from equipment items | [ ] |
 | Prevent invalid equipment placement or duplicate slot misuse | [ ] |
-| Create equipment generation rules by rarity and level | [ ] |
 | Ensure equipment is visible in the character sheet and inventory | [ ] |
+| Add equipment to merchant | [ ] |
 
 ## Phase 3: Build progression and economy (priority 3)
 --------------------------------------------

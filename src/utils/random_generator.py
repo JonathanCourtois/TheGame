@@ -37,7 +37,6 @@ class Rarity(Enum):
             if rand < cumulative:
                 return rarity
 
-
 def random_rarity():
     """
     Returns a random rarity based on the defined probabilities.

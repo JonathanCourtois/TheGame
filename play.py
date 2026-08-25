@@ -80,6 +80,7 @@ def main():
                 print(f"{monster.display_sheet()}")
                 fight.fight([character, monster])
 
+        # DEBUG
         elif action.lower() == 'level':
             action = input("Enter the level you want to reach: ")
             try:
@@ -113,12 +114,9 @@ def main():
             item = randgen.generate_item()
             character.add_to_inventory(item)
         
-        elif action.lower() == 'spn eqpt': # debug
-            try:
-                equipmt = randgen.generate_equipement()
-                character.add_to_inventory(equipmt)
-            except Exception as e:
-                print(f"{e}")
+        elif action.lower() == 'spn eqpt' or action.lower() == 'eq': # debug
+            equipmt = randgen.generate_equipement()
+            character.add_to_inventory(equipmt)
 
         elif action.lower() == 'rg': # debug
             character = randgen.generate_character()
