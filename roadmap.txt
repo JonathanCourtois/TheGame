@@ -1,0 +1,170 @@
+The Game – Project Roadmap
+
+Project goal
+- Build a playable roguelike adventure RPG centered on character generation, combat, loot, inventory, equipment, progression, and replayability.
+- Keep the project easy to extend and maintain while focusing on a good core loop before expanding the content layer.
+
+Current project assessment
+- The project already contains the foundations of a playable prototype:
+  - Character generation and rarity system
+  - Inventory and item usage
+  - Combat loop against monsters
+  - Exploration encounters and merchant interactions
+  - Save/loading groundwork
+- The biggest risks are currently in code stability and gameplay consistency:
+  - combat flow and fight termination
+  - equipment system is incomplete
+  - save system needs a clear schema and safer behavior
+  - balancing and progression rules are still rough
+
+Roadmap by phase
+
+Phase 1 – Stabilize the core loop (priority 1)
+Goal: Make the game reliable and playable from start to finish.
+
+Tasks:
+- Fix combat flow bugs:
+  - ensure the winner is always determined correctly
+  - stop unintended exits or early termination
+  - validate turns, flee logic, and inventory actions during combat
+- Clean the main game loop:
+  - validate action choices
+  - avoid repeated or broken prompts
+  - improve user feedback and error handling
+- Fix save system:
+  - create a consistent save file structure
+  - define save behavior for character creation, overwrite, delete, and loading
+  - avoid accidental deletion or invalid state
+- Validate character progression:
+  - level-up logic
+  - XP gain and thresholds
+  - health restoration and death state
+
+Definition of done:
+- A fresh character can be created
+- The player can explore, fight, rest, and quit without crashes
+- A fight ends cleanly with a valid winner and reward logic
+- A save can be created and loaded consistently
+
+Phase 2 – Complete the equipment and inventory system (priority 2)
+Goal: Make gear meaningful and usable.
+
+Tasks:
+- Implement equipment slots properly:
+  - weapon
+  - body armor
+  - head/helmet
+  - belt
+  - neck
+  - rings
+  - boots
+  - gloves/arms
+- Add equip / unequip actions to the character inventory flow
+- Add stat bonuses from equipment items
+- Prevent invalid equipment placement or duplicate slot misuse
+- Create equipment generation rules by rarity and level
+- Ensure equipment is visible in the character sheet and inventory
+
+Definition of done:
+- Player can equip and unequip gear from inventory
+- Equipment modifies stats in a clear and consistent way
+- Character sheet reflects equipped items correctly
+- Equipment generation is balanced by level and rarity
+
+Phase 3 – Build progression and economy (priority 3)
+Goal: Provide satisfying progression from one run to the next.
+
+Tasks:
+- Balance monster difficulty against player character level/CR
+- Improve gold rewards and merchant pricing
+- Add item rarity scaling and sell/buy logic
+- Implement level-up bonuses in a readable format
+- Add experience and reward curves for exploration and combat
+- Define run progression: enemy scaling, item quality, merchant availability
+
+Definition of done:
+- A player can earn gold and XP meaningfully
+- Merchants feel useful and consistent
+- Enemy difficulty stays fair and predictable
+- Character progression feels rewarding without becoming trivial
+
+Phase 4 – Expand content and world interactions (priority 4)
+Goal: Turn the prototype into a more complete game loop.
+
+Tasks:
+- Add more monster types and templates
+- Add more consumable item types and chest variations
+- Create distinct event types:
+  - combat encounters
+  - treasures
+  - traps
+  - merchants
+  - healing events
+  - optional challenges
+- Add dungeon or zone progression
+- Add a world map or encounter sequence if the game expands beyond a simple loop
+
+Definition of done:
+- The game offers more than one encounter type repeatedly
+- New content remains consistent with the level and rarity rules
+- A full run feels varied and replayable
+
+Phase 5 – Persistence, polish, and quality of life (priority 5)
+Goal: Make the project stable and enjoyable to play.
+
+Tasks:
+- Improve display and UI formatting
+- Add a proper naming flow and character summary
+- Improve logging for actions and combat state
+- Add achievements or progression goals
+- Add proper error handling and player feedback for edge cases
+- Refactor repeated logic into cleaner modules and utilities
+- Write unit tests for critical systems
+
+Definition of done:
+- Input flows are clear and understandable
+- The game is easier to debug and extend
+- Core logic is covered by automated tests
+- The experience feels polished enough for external playtesting
+
+Phase 6 – Long-term vision: deeper roguelike features
+Goal: Move beyond a simple prototype toward a richer RPG experience.
+
+Possible future additions:
+- different biomes or regions
+- multiple character classes or archetypes
+- deeper merchant and economy rules
+- rarity-based crafting or upgrading
+- procedural map generation
+- death and run reset flow with persistent meta progression
+- achievement and title system
+- multiple save slots or profile management
+
+Suggested release plan
+- v0.1: stable core loop, basic combat, basic inventory
+- v0.2: equipment system and progression fixes
+- v0.3: improved monsters, loot, and merchant economy
+- v0.4: save flow and quality-of-life upgrades
+- v0.5: content expansion and balancing pass
+- v1.0: polished, stable, and reasonably complete game loop
+
+Recommended order of execution
+1. Fix combat and save system
+2. Complete equipment and inventory behavior
+3. Balance progression and economy
+4. Add more content and enemy variety
+5. Refactor and polish for release
+
+Suggested weekly milestones
+- Week 1: combat stability + save reliability
+- Week 2: equipment implementation + character sheet updates
+- Week 3: balancing + merchant + rewards
+- Week 4: content expansion + test coverage
+- Week 5: polish and release candidate
+
+Priority notes
+- Do not expand the content layer before the combat and save flow are stable.
+- The fastest path to a fun game is to fix the core loop first, then add content on top of a reliable foundation.
+- Equipment and progression are the most important systems after stability because they create long-term game value.
+
+This roadmap should be revisited every 2–3 weeks as the project evolves and new priorities appear.
