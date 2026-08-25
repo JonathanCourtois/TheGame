@@ -1,7 +1,7 @@
 from src.Object.character import Character
 from src.Object.item import Item
-import src.utils.random_generator as randgen
-from src.utils.display import ctxt, Colors
+import src.Utils.random_generator as randgen
+from src.Utils.display import ctxt, Colors
 import random
 
 class Merchant(Character):

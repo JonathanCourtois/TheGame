@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 import random
 from src.Object.character import Character
 from src.Object.monster import Monster
-from src.utils.display import ctxt, Colors, timed_input
+from src.Utils.display import ctxt, Colors, timed_input
 
 def fight(fighters_list:list):
     """

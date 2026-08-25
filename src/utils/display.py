@@ -4,7 +4,7 @@ import select
 import os
 import time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-import src.utils.random_generator as randgen
+import src.Utils.random_generator as randgen
 
 from platform import system
 if system() == 'Windows':
@@ -24,6 +24,7 @@ class Colors:
     RED = "\033[31m"
     GREEN = "\033[32m"
     YELLOW = "\033[33m"
+    ORANGE = "\033[38;2;255;165;0m"
     BLUE = "\033[34m"
     MAGENTA = "\033[35m"
     CYAN = "\033[36m"
@@ -35,6 +36,12 @@ def ctxt(text:str, color:Colors):
     Wraps the text in the specified color.
     """
     return f"{color}"+text+f"{Colors.RESET}"
+
+def dprint(text:str):
+    """
+    Prints the text for debug in orange
+    """
+    print(ctxt(text, Colors.YELLOW))
 
 def color_text_from_rarity(name:str, rarity:randgen.Rarity):
     """

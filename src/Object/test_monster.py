@@ -1,7 +1,7 @@
 import pytest
 import random
 from .monster import Monster
-from src.utils.random_generator import Rarity
+from src.Utils.random_generator import Rarity
 
 def test_monster_initialization():
     monster = Monster()

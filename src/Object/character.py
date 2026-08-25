@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import random
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from src.utils.random_generator import random_rarity, Rarity
-from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
-from src.Object.Entity import Entity
+from src.Utils.random_generator import random_rarity, Rarity
+from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint
+from src.Object.entity import Entity
 from src.Object.item import Item
 import pickle as pkl
  
@@ -12,6 +13,7 @@ class Character(Entity):
     def __init__(self):
         super().__init__()
         self.name = "Character"
+        self.uid  = 0               # between 1 and 10 Only
         self.inventory = []
         self.equipment = {'head': None, 'body': None, 'legs': None, 'feet': None, 'left hand': None, 'right hand': None, 'neck': None, 'ring1': None, 'ring2': None, 'belt': None}
 
@@ -208,7 +210,7 @@ class Character(Entity):
         """
         Save the character's stats to a file.
         """
-        action = input(f"Do you want to save the character {self.displayed_name()} {self.rarity.name} {self.level}? (y/n): ")
+        action = input(f"Do you want to save the character {self.displayed_name()} {self.rarity.name} lvl:{self.level} ? (y/n): ")
         if action.lower() != 'y':
             print("Character not saved.")
             return
@@ -222,20 +224,40 @@ class Character(Entity):
         with open("save/characters.pkl", "rb") as f:
             characters = pkl.load(f)
 
-        # check if the character already exists
-        if f"{self.name} {self.rarity.name} {self.level}" in characters:
-            action = input(f"Character {self.displayed_name()} {self.rarity.name} {self.level} already exists. Do you want to overwrite it? (y/n): ")
-            if action.lower() != 'y':
-                print("Character not saved.")
-                return
-            else:
-                print("Character overwrited.")
-        
-        characters[f"{self.name} {self.rarity.name} {self.level}"] = self
+        # check if the character already exists by UID
+        if self.uid < 1 and len(characters) < 10: # new character not loaded, it's a new one
+            dprint(f"debug : {list(characters.keys())} - {1 in characters.keys()=}")
+            for i in range(1, 11):
+                if i not in characters.keys():
+                    self.uid = i
+                    dprint(f"choosen UID {i}")
+                    break
+            # Update local save
+            
+            print(f"Saving - {self.displayed_name()} {self.rarity.name} lvl: {self.level}\n")
+            characters[self.uid] = self
 
-        with open("save/characters.pkl", "wb") as f:
-            pkl.dump(characters, f)
+        elif self.uid < 1 and len(characters) >= 10: # new character not loaded and save slot full
+            action = input("Save slot are full. Do you want to delete an other character ? (y/n)")
+            if action.lower() == 'y': 
+                self.manage_save(delete_mode=True)
+                self.save()
+            else:
+                print("Character not saved.")
+
+        else: # character is a previous loaded one
+            print(f"Character already exists :")
+            print(f"old : {characters[self.uid].displayed_name()} {characters[self.uid].rarity.name} lvl: {characters[self.uid].level}")
+            action = input(f"new : {self.displayed_name()} {self.rarity.name} lvl: {self.level}\nDo you want to overwrite it? (y/n): ")
+            if action.lower() == 'y':
+                # Update local save
+                characters[self.uid] = self
+                print("Character overwrited.")
+            else:
+                print("Character not saved.")
         
+        with open("save/characters.pkl", "wb") as f:
+            pkl.dump(characters, f) # Update save file
         return
                 
     def delete_save_file(self, save_file="save/characters.pkl"):
@@ -252,17 +274,18 @@ class Character(Entity):
         # load the existing characters
         with open(save_file, "rb") as f:
             characters = pkl.load(f)
-
-        if f"{self.name} {self.rarity.name} {self.level}" in characters:
-            del characters[f"{self.name} {self.rarity.name} {self.level}"]
+        
+        if self.uid in characters:
+            character_name = characters[character_uid].displayed_name()
+            del characters[self.uid]
             with open(save_file, "wb") as f:
                 pkl.dump(characters, f)
-            print(f"Character {self.displayed_name()} deleted.")
+            print(f"Character {character_name} deleted.")
         else:
             print(f"Character {self.displayed_name()} not found in save file.")
 
     @staticmethod
-    def manage_save(save_file="save/characters.pkl"):
+    def manage_save(save_file="save/characters.pkl", delete_mode=False):
         """
         manage_save character's from a file.
         """
@@ -278,18 +301,22 @@ class Character(Entity):
             characters = pkl.load(f)
 
         if len(characters) > 0:
-            action = (f"{len(characters)} characters found. Do you want to load or manage the saves (l) OR start with a new character (n): ")
-            action = input(action)
-            if action.lower() == 'l':
+            action = (f"{len(characters)} characters found. Do you want to load or manage the saves (m) OR start with a new character (n): ")
+            action = input(action) if not delete_mode else 'm'
+
+            if action.lower() == 'm':
                 while True:
-                    for i, (name, character) in enumerate(characters.items()):
-                        print(f"{i} - {name}")
-                    action = input("Do you want to load a character (l), delete one (d) or start with a new one (n)? ")
+                    for i, (uid, character) in enumerate(characters.items()):
+                        print(f"{i} - {character.displayed_name()} {character.rarity.name} lvl: {character.level}")
+                    
+                    action = input("Do you want to load a character (l), delete one (d) or start with a new other one (n)? ") if not delete_mode else 'd'
+
                     if action.lower() == 'd':
                         index = int(input("Enter the index of the character you want to delete: "))
                         if 0 <= index < len(characters):
-                            character_name = list(characters.keys())[index]
-                            del characters[character_name]
+                            character_uid = list(characters.keys())[index]
+                            character_name = characters[character_uid].displayed_name()
+                            del characters[character_uid]
                             with open(save_file, "wb") as f:
                                 pkl.dump(characters, f)
                             with open(save_file, "rb") as f:
@@ -297,21 +324,33 @@ class Character(Entity):
                             print(f"Character {character_name} deleted.")
                         else:
                             print("Invalid index. No character deleted.")
+                        if delete_mode:
+                            return None
+
                     elif action.lower() == 'l':
-                        action = input("Enter the number of the character you want to load: ")
+                        action = input("Enter the index of the character you want to load: ")
                         try:
                             index = int(action)
                             if 0 <= index < len(characters):
-                                character_name = list(characters.keys())[index]
+                                # LOAD Character
+                                character_uid = list(characters.keys())[index]
+                                character_name = characters[character_uid].displayed_name()
                                 print(f"Loading character: {character_name}")
-                                return characters[character_name]
+
+                                print(f"{characters[character_uid]} - {characters[character_uid].uid=}")
+                                return characters[character_uid]
                             else:
                                 print("Invalid index. No character loaded.")
                         except ValueError:
                             print("Invalid input. No character loaded.")
                         return None
+                    
                     else:
-                        return None                
+                        return None     
+
+                    if len(characters) <= 0:  
+                        print("No more characters to load.\n")
+                        return None
             else:
                 return None
             

@@ -5,8 +5,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 import random
 import math
 import re
-from src.utils.random_generator import random_rarity, Rarity
-from src.utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
+from src.Utils.random_generator import random_rarity, Rarity
+from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
 
 class Entity:
     def __init__(self):

@@ -12,7 +12,7 @@ The Game is a character-based adventure game where players can generate unique c
 
 ## Project Structure
 ```
-TheGame-0.0.1/
+TheGame-V0.1/
 ├── src/
 |   ├── Object/
 |   |   └── ...

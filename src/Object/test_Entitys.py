@@ -1,7 +1,7 @@
 import pytest
 import random
 from .Entity import Entity
-from src.utils.random_generator import Rarity
+from src.Utils.random_generator import Rarity
 
 # TheGame/src/Entity/test_Entity.py
 

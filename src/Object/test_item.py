@@ -1,7 +1,7 @@
 import pytest
 import random
 from .item import Item, item_list
-from src.utils.random_generator import Rarity
+from src.Utils.random_generator import Rarity
 
 
 item_names = ["Healing Potion", "Gold Chest", "XP Chest", "Mystery Chest", "Mastery Chest"]

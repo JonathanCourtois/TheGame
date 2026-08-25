@@ -1,6 +1,6 @@
 import pytest
 from .character import Character
-from src.utils.random_generator import Rarity
+from src.Utils.random_generator import Rarity
 
 # TheGame/src/Entity/test_character.py
 

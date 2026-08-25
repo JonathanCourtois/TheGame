@@ -1,10 +1,10 @@
 import random
 from src.Object.character import Character
 from src.Object.monster import Monster
-from src.utils.merchant import Merchant
-import src.utils.random_generator as randgen
-import src.utils.fight as fight
-import src.utils.display as dsp
+from src.Utils.merchant import Merchant
+import src.Utils.random_generator as randgen
+import src.Utils.fight as fight
+import src.Utils.display as dsp
 import os
 
 
@@ -112,6 +112,13 @@ def main():
         elif action.lower() == 'spawn item': # debug
             item = randgen.generate_item()
             character.add_to_inventory(item)
+        
+        elif action.lower() == 'spn eqpt': # debug
+            try:
+                equipmt = randgen.generate_equipement()
+                character.add_to_inventory(equipmt)
+            except Exception as e:
+                print(f"{e}")
 
         elif action.lower() == 'rg': # debug
             character = randgen.generate_character()

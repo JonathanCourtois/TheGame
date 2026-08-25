@@ -3,9 +3,9 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
-from src.utils.random_generator import Rarity
+from src.Utils.random_generator import Rarity
 from src.Object.item import Item
-from src.utils.display import ctxt, Colors
+from src.Utils.display import ctxt, Colors
 
 class Equipement(Item):
     def __init__(self):
