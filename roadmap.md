@@ -92,7 +92,7 @@
 - achievement and title system
 - multiple save slots or profile management
 
-## Suggested release plan
+## Release plan
 - v0.1: stable core loop, basic combat, basic inventory
 - v0.2: equipment system and progression fixes
 - v0.3: improved monsters, loot, and merchant economy
@@ -100,24 +100,10 @@
 - v0.5: content expansion and balancing pass
 - v1.0: polished, stable, and reasonably complete game loop
 
-## Recommended order of execution
+## Order of execution
 1. Fix combat and save system
 2. Complete equipment and inventory behavior
 3. Balance progression and economy
 4. Add more content and enemy variety
 5. Refactor and polish for release
-
-## Suggested weekly milestones
-- Week 1: combat stability + save reliability
-- Week 2: equipment implementation + character sheet updates
-- Week 3: balancing + merchant + rewards
-- Week 4: content expansion + test coverage
-- Week 5: polish and release candidate
-
-## Priority notes
-- Do not expand the content layer before the combat and save flow are stable.
-- The fastest path to a fun game is to fix the core loop first, then add content on top of a reliable foundation.
-- Equipment and progression are the most important systems after stability because they create long-term game value.
-
-This roadmap should be revisited every 2–3 weeks as the project evolves and new priorities appear.
 
