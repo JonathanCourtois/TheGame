@@ -198,11 +198,11 @@ class Character(Entity):
         if self.life <= 0:
             return f"{name} is dead!"
         elif self.life < self.maxlife*0.2:
-            return f"{name} looks really bad! {ctxt(f'{self.life}', life_color)} hit point left!"
+            return f"{name} looks really bad! {ctxt(f'{self.life}', life_color)} hit point left!\n"
         elif self.life < self.maxlife*0.5:
-            return f"{name} looks wounded! {ctxt(f'{self.life}', life_color)} hit point left!"
+            return f"{name} looks wounded! {ctxt(f'{self.life}', life_color)} hit point left!\n"
         else:
-            return f"{name} looks to handle it! {ctxt(f'{self.life}', life_color)} hit point left!"
+            return f"{name} looks to handle it! {ctxt(f'{self.life}', life_color)} hit point left!\n"
         
     def save(self):
         """

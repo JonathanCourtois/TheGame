@@ -56,7 +56,9 @@ def fight(fighters_list:list):
                 if isinstance(fighter[0], Character):
                     if not(combat_log == "" or combat_log == "\n"):
                         print(combat_log)
-                        action = timed_input("\npress i to open inventory, f to flee or any other key to continue\n", timeout=1)
+                        life_percent = 100 * ( fighter[0].life / fighter[0].maxlife)
+                        life_timeout = (-life_percent/25 ) + 5
+                        action = timed_input("\npress i to open inventory, f to flee or any other key to continue\n", timeout=life_timeout)
                     # else:
                         # action = timed_input("", timeout=1)
                 elif isinstance(fighter[0], Monster):
@@ -64,6 +66,8 @@ def fight(fighters_list:list):
                         flee_roll = fighter[0].roll_d(100)
                         if flee_roll < fighter[0].life * 100 / fighter[0].maxlife:
                             action = "f"
+                    elif not(combat_log == "" or combat_log == "\n"):
+                        print(combat_log)
 
                 if action == "i":
                     fighter[3] = True
@@ -72,6 +76,7 @@ def fight(fighters_list:list):
                 else:
                     fighter[3] = False
                     fighter[2] = False
+                print(f"debbug action {action}")
                 if fighters[1-i][0].life <= 0:
                     break
 

@@ -247,7 +247,7 @@ class Entity:
         combat_log  = combat_log
         
         if hit == 0:
-            combat_log  = ""
+            # combat_log  = ""
             return combat_log
         
         elif hit > const_check:
@@ -255,13 +255,13 @@ class Entity:
             combat_log += f"{self.displayed_name()} takes {ctxt(f'{damage:2d}',Colors.RED)} damage!\n"
             combat_log += self.life_status()
 
-        proba_display = random.random()
-        if hit < const_check/2 and proba_display < 0.5:
+        # proba_display = random.random()
+        if hit < const_check/2 : # and proba_display < 0.5:
             combat_log += f"{self.displayed_name()} dodges the attack!\n"
-        elif proba_display < 0.5:
+        elif hit <= const_check : # proba_display < 0.5:
             combat_log += f"{self.displayed_name()} blocks the attack!\n"
-        else:
-            combat_log  = ""
+        # else:
+        #     combat_log  = ""
         
         return combat_log
 

@@ -8,7 +8,8 @@ import src.utils.random_generator as randgen
 
 from platform import system
 if system() == 'Windows':
-    from msvcrt import getwch, kbhit
+    from msvcrt import getwch as getch
+    from msvcrt import kbhit
 else:
     def getch():
         ch = sys.stdin.read(1)
@@ -68,7 +69,7 @@ def timed_input(prompt, timeout=1):
     while True:
         if kbhit():
             # char = msvcrt.getwch()
-            char = getwch()
+            char = getch()
             if char == '\r':  # Enter key
                 # print()
                 return input_str
@@ -76,6 +77,7 @@ def timed_input(prompt, timeout=1):
                 input_str = input_str[:-1]
             else:
                 input_str += char
+            return input_str
         if time.time() - start_time > timeout:
             # print()  # Move to next line
             return None
