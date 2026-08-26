@@ -21,9 +21,9 @@ def test_entity_initialization():
     assert entity.gold          == 0
     assert entity.xp            == 0
 
-def test_get_equipement_name():
+def test_get_equipment_name():
     entity = Entity()
-    assert entity.get_equipement_name(random.randint(1, 100)) == "E Error"
+    assert entity.get_equipment_name(random.randint(1, 100)) == "E Error"
 
 def test_get_inventory_item_name():
     entity = Entity()

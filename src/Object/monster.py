@@ -18,7 +18,7 @@ class Monster(Entity):
         self.inventory = []
         self.equipment = {'head': None, 'body': None, 'legs': None, 'feet': None, 'left hand': None, 'right hand': None, 'neck': None, 'ring1': None, 'ring2': None, 'belt': None}
 
-    def display_sheet(self, equipement=False, inventory=False, xp=False):
+    def display_sheet(self, equipment=False, inventory=False, xp=False):
         """
         Display the character stats in a sheet format.
         format:
@@ -29,7 +29,7 @@ class Monster(Entity):
         # Stat n | #
         # Inventory #
         """
-        sheet = super().display_sheet(equipement=equipement, inventory=inventory, xp=xp)
+        sheet = super().display_sheet(equipment=equipment, inventory=inventory, xp=xp)
 
         return sheet
     

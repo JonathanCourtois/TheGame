@@ -54,7 +54,7 @@ class Entity:
             stats = f"{stats}XP {'-'*24} :{' '*2}{ctxt(f'{self.xp:3d}',Colors.CYAN)}/{ctxt(f'{(4*self.level)**2:<3d}',Colors.CYAN)}\n"
         return stats
 
-    def get_equipement_name(self, slot):
+    def get_equipment_name(self, slot):
         """
         Get the name of the equipment in the given slot.
         Return E Error because Entity has no equipment.
@@ -68,7 +68,7 @@ class Entity:
         """
         return "E Error"
 
-    def display_sheet(self, equipement=False, inventory=False, xp=False):
+    def display_sheet(self, equipment=False, inventory=False, xp=False):
         """
         Display the stats in a sheet format:
         # HEADER #
@@ -90,25 +90,25 @@ class Entity:
         Header  = f"# Name : {color_text_from_rarity(f'{self.name:^{np}s}', self.rarity)} :"
         class_slot = f"Class {color_text_from_rarity(f'{self.rarity.name:1s}', self.rarity)}"
         Header += f"{class_slot:^{vp+11}s}"
-        if equipement:
+        if equipment:
             Header += f"{'#'*(sw-vp-np-29)}"
         Header += f"#\n"
 
         sheet = f"{Header}# Level {'-'*(st+7)} :{self.level:^{vp}d}"
         eq_h = ''
-        if equipement:
+        if equipment:
             eq_h = f"#{' ':{cp}s}⌈{' Head':^{ep}s}⌉{' ':{cp}s}"
             eq_h += f"⌈{' Neck':^{ep}s}⌉ "
 
         sheet += f"{eq_h}#\n"
         sheet = f"{sheet}# CR {'-'*(st+10)} :{self.cr:^{vp}d}"
-        if equipement:
-            eq_h = f"#{' ':{cp}s}⌊{self.get_equipement_name('head'):^{ep}s}⌋{' ':{cp}s}"
-            eq_h += f"⌊{self.get_equipement_name('neck'):^{ep}s}⌋ "
+        if equipment:
+            eq_h = f"#{' ':{cp}s}⌊{self._center_ansi(self.get_equipment_name('head'),ep)}⌋{' ':{cp}s}"
+            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('neck'),ep)}⌋ "
         sheet += f"{eq_h}#\n"
 
         sheet = f"{sheet}# Life {'-'*(st+8)} :{ctxt(f'{self.life:>{int(vp/2)}d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:<{int(vp/2)}d}',Colors.GREEN)}"
-        if equipement:
+        if equipment:
             eq_h = f"# ⌈{'Left  Hand':^{ep}s}⌉"
             eq_h += f"⌈{'Body':^{ep}s}⌉"
             eq_h += f"⌈{'Right Hand':^{ep}s}⌉ "
@@ -116,40 +116,40 @@ class Entity:
         sheet += f"{eq_h}#\n"
 
         sheet += f"# Constitution {'-'*(st)} :{self.constitution:^{vp}d}"
-        if equipement:
-            eq_h = f"# ⌊{self.get_equipement_name('left hand'):^{ep}s}⌋"
-            eq_h += f"⌊{self.get_equipement_name('body'):^{ep}s}⌋"
-            eq_h += f"⌊{self.get_equipement_name('right hand'):^{ep}s}⌋ "
-            eq_h += f"⌊{self.get_equipement_name('belt'):^{ep}s}⌋ "
+        if equipment:
+            eq_h = f"# ⌊{self._center_ansi(self.get_equipment_name('left hand'),ep)}⌋"
+            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('body'),ep)}⌋"
+            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('right hand'),ep)}⌋ "
+            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('belt'),ep)}⌋ "
         sheet += f"{eq_h}#\n"
 
         sheet += f"# Speed {'-'*(st+7)} :{self.speed:^{vp}d}"
-        if equipement:
+        if equipment:
             eq_h = f"#{' ':{cp}s}⌈{'Legs':^{ep}s}⌉{' ':{cp}s}"
             eq_h += f"⌈{'Ring 1':^{ep}s}⌉ "
         sheet += f"{eq_h}#\n"
 
         sheet += f"# Strength {'-'*(st+4)} :{self.strength:^{vp}d}"
-        if equipement:
-            eq_h = f"#{' ':{cp}s}⌊{self.get_equipement_name('legs'):^{ep}s}⌋{' ':{cp}s}"
-            eq_h += f"⌊{self.get_equipement_name('ring1'):^{ep}s}⌋ "
+        if equipment:
+            eq_h = f"#{' ':{cp}s}⌊{self._center_ansi(self.get_equipment_name('legs'),ep)}⌋{' ':{cp}s}"
+            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('ring1'),ep)}⌋ "
         sheet += f"{eq_h}#\n"
 
         sheet += f"# Focus {'-'*(st+7)} :{self.focus:^{vp}d}"
-        if equipement:
+        if equipment:
             eq_h = f"#{' ':{cp}s}⌈{'Feet':^{ep}s}⌉{' ':{cp}s}"
             eq_h += f"⌈{'Ring 2':^{ep}s}⌉ "
         sheet += f"{eq_h}#\n"
 
         sheet += f"# Gold {'-'*(st+8)} :{ctxt(f'{self.gold:^{vp}d}',Colors.YELLOW)}"
-        if equipement:
-            eq_h = f"#{' ':{cp}s}⌊{self.get_equipement_name('feet'):^{ep}s}⌋{' ':{cp}s}"
-            eq_h += f"⌊{self.get_equipement_name('ring2'):^{ep}s}⌋ "
+        if equipment:
+            eq_h = f"#{' ':{cp}s}⌊{self._center_ansi(self.get_equipment_name('feet'),ep)}⌋{' ':{cp}s}"
+            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('ring2'),ep)}⌋ "
         sheet += f"{eq_h}#\n"
 
         if xp:
             sheet += f"# XP {'-'*(st+10)} :{ctxt(f'{self.xp:>{int(vp/2)}d}',Colors.CYAN)}/{ctxt(f'{(4*self.level)**2:<{int(vp/2)}d}',Colors.CYAN)}"
-            if equipement:
+            if equipment:
                 sheet += f"#{' '*(4*cp-1)}#\n"
             else:
                 sheet += f"#\n"
@@ -169,7 +169,7 @@ class Entity:
                 inventory += f"\n"
             sheet += f"{inventory}"
 
-        if inventory or equipement:
+        if inventory or equipment:
             sheet += f"{'#'*(2*ip+ep+1)}\n"
         else:
             sheet += f"{'#'*(np+st+vp-2)}\n"
@@ -200,7 +200,13 @@ class Entity:
         """
         visible = self._strip_ansi(s)
         if len(visible) >= width:
+            if len(visible) > width:
+                parts = re.split(visible, s)
+                s = parts[0] + visible[:width] + parts[1]
+                print(s)
+            
             return s
+
         pad_total = width - len(visible)
         left = pad_total // 2
         right = pad_total - left
@@ -347,7 +353,7 @@ class Entity:
                 if debug:
                     print(f"{self.displayed_name()} randomly chose to upgrade {stats[action]}!")
             else:
-                print(f"\n{self.display_sheet(equipement=True, inventory=True, xp=True)}")
+                print(f"\n{self.display_sheet(equipment=True, inventory=True, xp=True)}")
                 print(f"{self.displayed_name()} has {credit} upgrade credits left.")
                 print("Available stats to upgrade:")
                 for i, stat in stats.items():
@@ -421,6 +427,6 @@ if __name__ == "__main__":
     rentity.xp = 10000
     for i in range(2**3):
         a,b,x = bin(i)[2:].zfill(3)
-        print(rentity.display_sheet(inventory=bool(int(a)), equipement=bool(int(b)), xp=bool(int(x))))
-    rentity.display_sheet(equipement=True, inventory=True, xp=True)
+        print(rentity.display_sheet(inventory=bool(int(a)), equipment=bool(int(b)), xp=bool(int(x))))
+    rentity.display_sheet(equipment=True, inventory=True, xp=True)
         

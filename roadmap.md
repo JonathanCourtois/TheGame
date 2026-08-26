@@ -41,9 +41,9 @@
 | --- | --- |
 | Balance monster difficulty against player character level/CR | [ ] |
 | Improve gold rewards and merchant pricing | [ ] |
-| Add item rarity scaling and sell/buy logic | [ ] |
+| Improve item rarity scaling and sell/buy logic | [ ] |
 | Implement level-up bonuses in a readable format | [ ] |
-| Add experience and reward curves for exploration and combat | [ ] |
+| Improve experience and reward curves for exploration and combat | [ ] |
 | Define run progression: enemy scaling, item quality, merchant availability | [ ] |
 
 ## Phase 4: Expand content and world interactions (priority 4)
@@ -52,6 +52,7 @@
 | Task | Status |
 | --- | --- |
 | Add more monster types and templates | [ ] |
+| Add persistant monster that kill previous ca | [ ] |
 | Add more consumable item types and chest variations | [ ] |
 | Create distinct event types: combat encounters | [ ] |
 | Create distinct event types: treasures | [ ] |

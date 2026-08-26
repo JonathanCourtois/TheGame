@@ -115,7 +115,7 @@ def main():
             character.add_to_inventory(item)
         
         elif action.lower() == 'spn eqpt' or action.lower() == 'eq': # debug
-            equipmt = randgen.generate_equipement()
+            equipmt = randgen.generate_equipment()
             character.add_to_inventory(equipmt)
 
         elif action.lower() == 'rg': # debug

@@ -7,6 +7,8 @@ from src.Utils.random_generator import random_rarity, Rarity
 from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint
 from src.Object.entity import Entity
 from src.Object.item import Item
+from src.Object.equipment import Equipment
+
 import pickle as pkl
  
 class Character(Entity):
@@ -26,7 +28,7 @@ class Character(Entity):
         print(f"Deprecated method display_stats, use display_sheet instead.")
         stats = super().display_stats(cr=cr, life=life, cst=cst, spd=spd, strg=strg, fcs=fcs,gold=gold, xp=xp)
         # ADD Inventory Display
-        stats += self.display_equipement(name_only=True)
+        stats += self.display_equipment(name_only=True)
         stats += self.display_inventory(name_only=True)
         return stats
         
@@ -47,30 +49,30 @@ class Character(Entity):
                  inv_str += f"ID : {i:2d}\n{item.display_stats()}"
         return inv_str
         
-    def display_equipement(self, name_only=False):
+    def display_equipment(self, name_only=False):
         """
-        Display the character's equipement.
+        Display the character's equipment.
         """
-        inv_str = "Equipement:\n"
+        inv_str = "equipment:\n"
         if name_only:
             for i, item in enumerate(self.equipment):
                 if self.equipment[item] is not None:
-                    raise NotImplementedError("Display equipement not implemented yet.")
+                    raise NotImplementedError("Display equipment not implemented yet.")
                 else:
                     inv_str += f"{item:^12s} : {'Empty':^16s} | "
                     if item in ['feet', 'right hand', 'belt']:
                         inv_str += "\n"
         else:   
-            raise NotImplementedError("Display equipement not implemented yet.")
+            raise NotImplementedError("Display equipment not implemented yet.")
         return inv_str
 
-    def get_equipement_name(self, slot):
+    def get_equipment_name(self, slot):
         """
         Get the name of the equipment in the given slot.
         """
         if slot in self.equipment:
             if self.equipment[slot] is not None:
-                return self.equipment[slot].displayed_name()
+                return self.equipment[slot].displayed_name().strip()
             else:
                 return "----"
         else:
@@ -85,7 +87,7 @@ class Character(Entity):
         else:
             return 'Empty'
 
-    def display_sheet(self, equipement=True, inventory=True, xp=True):
+    def display_sheet(self, equipment=True, inventory=True, xp=True):
         """
         Display the character stats in a sheet format.
         format:
@@ -96,7 +98,7 @@ class Character(Entity):
         # Stat n | #
         # Inventory #
         """
-        sheet = super().display_sheet(equipement=equipement, inventory=inventory, xp=xp)
+        sheet = super().display_sheet(equipment=equipment, inventory=inventory, xp=xp)
 
         return sheet
 
@@ -108,7 +110,7 @@ class Character(Entity):
         """
         print("Inventory Management:\n")
         print(self.display_inventory())
-        action = input("What would you like to do? (s: show item stats, d: drop, e: equip, u: use, x: unequip, q: quit) ")
+        action = input("What would you like to do? (s: show item stats, d: drop, e: equipment, u: use, q: quit) ")
 
         if action.lower() == 's':
             print(self.display_inventory())
@@ -123,15 +125,7 @@ class Character(Entity):
             print(f"\n{item.displayed_name()} has been dropped from your inventory.")
 
         elif action.lower() == 'e':
-            item_index = int(input("\nEnter the index of the item you want to use: "))
-            if item_index < 0 or item_index >= len(self.inventory):
-                print("Invalid index.")
-                return
-            item = self.inventory[item_index]
-            if item.isequipable() :
-                print("Not implemented yet.")
-            else :
-                print(f"This item can't be equiped")
+            Equipment.equipment_mode(self)
         
         elif action.lower() == 'u':
             item_index = int(input("\nEnter the index of the item you want to use: "))
@@ -143,9 +137,6 @@ class Character(Entity):
                 self.use_item(item)
             else :
                 print(f"This item can't be used")
-
-        elif action.lower() == 'x':
-            print("Not implemented yet.")
 
         elif action.lower() == 'q':
             print("Exiting inventory management.")

@@ -100,7 +100,7 @@ def generate_item(level:int = None, rarity:Rarity = None):
 
     return Item.generate_random_item(level = level, rarity = rarity)
 
-def generate_equipement(level:int = None, rarity:Rarity = None, type:str = None):
-    from src.Object.equipement import Equipement
+def generate_equipment(level:int = None, rarity:Rarity = None, type:str = None):
+    from src.Object.equipment import Equipment
 
-    return Equipement.generate_random_equipement(level = level, rarity = rarity, type = type)
+    return Equipment.generate_random_equipment(level = level, rarity = rarity, type = type)

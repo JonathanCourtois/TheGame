@@ -43,7 +43,7 @@ class Item(Entity):
     def isequipable(self):
         return self.equipable
     
-    def display_sheet(self, equipement=False, inventory=False, xp=False):
+    def display_sheet(self, equipment=False, inventory=False, xp=False):
         """
         Display the item stats in a sheet format.
         format:
@@ -53,7 +53,7 @@ class Item(Entity):
         # ...
         # Stat n | #
         """
-        sheet = super().display_sheet(equipement=equipement, inventory=inventory, xp=xp)
+        sheet = super().display_sheet(equipment=equipment, inventory=inventory, xp=xp)
         return sheet
     
     def use_item(self, character):
