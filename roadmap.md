@@ -28,7 +28,7 @@
 | Generate blank item | [x] |
 | Add / Remove item to character inventory | [x] |
 | Create equipment generation rules by rarity and level | [x] |
-| Add equip / unequip actions to the character inventory flow | [ ] |
+| Add equip / unequip actions to the character inventory flow | [x] |
 | Add stat bonuses from equipment items | [ ] |
 | Prevent invalid equipment placement or duplicate slot misuse | [ ] |
 | Ensure equipment is visible in the character sheet and inventory | [ ] |
