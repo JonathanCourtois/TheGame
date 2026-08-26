@@ -323,14 +323,17 @@ class Entity:
         Check the xp and set the level of the entity
         Give one credit to upgrade stats per level until max level.
         """
-        if self.xp >= (4*self.level)**2: # Level up condition
+        credits = 0
+        while self.xp >= (4*self.level)**2: # Level up condition
             self.xp -=  (4*self.level)**2
             if self.level >= self.maxlevel:
                 print(f"{self.displayed_name()} is already at max level!")
                 return
             self.level += 1
-            print(f"{self.displayed_name()} leveled up! New level: {self.level}")
-            self.upgrade_stats(credit=1, randomize=randomize, debug=debug)
+            credits += 1
+        print(f"{self.displayed_name()} leveled up! New level: {self.level}")
+        self.upgrade_stats(credit=credits, randomize=randomize, debug=debug)
+
         return 
     
     def gain_xp(self, xp, randomize=False, debug=False):
@@ -395,7 +398,7 @@ class Entity:
         else:
             self.rarity = rarity
         # Add credits upgrade from rarity
-        rarity_credit = (self.rarity.value-1)*5
+        rarity_credit = (self.rarity.value)*5
 
         if level is None: # Set level to random value
             self.level = random.randint(1, self.maxlevel)

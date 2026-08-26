@@ -1,5 +1,6 @@
 from src.Object.character import Character
 from src.Object.item import Item
+from src.Object.equipment import Equipment
 import src.Utils.random_generator as randgen
 from src.Utils.display import ctxt, Colors
 import random
@@ -32,9 +33,16 @@ class Merchant(Character):
         level = int(level if level > 0 else 1)
         super().generate(level=level)
         store = []
-        number_of_item = random.randint(1, 6)
+        number_of_item = random.randint(1, 10)
         for i in range(number_of_item):
-            store.append(Item.generate_random_item(level=self.level))
+            
+            local_lvl_modifier = random.randint(-2, 2)
+            local_lvl_modifier = max(1, self.level+local_lvl_modifier)
+            local_lvl_modifier = min(self.maxlevel, self.level+local_lvl_modifier)
+            if random.randint(0, 1) == 1:
+                store.append(Item.generate_random_item(level=local_lvl_modifier))
+            else:
+                store.append(Equipment.generate_random_equipment(level=local_lvl_modifier))
         self.store = store
         return self
     

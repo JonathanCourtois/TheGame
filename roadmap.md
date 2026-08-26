@@ -29,10 +29,10 @@
 | Add / Remove item to character inventory | [x] |
 | Create equipment generation rules by rarity and level | [x] |
 | Add equip / unequip actions to the character inventory flow | [x] |
-| Add stat bonuses from equipment items | [ ] |
-| Prevent invalid equipment placement or duplicate slot misuse | [ ] |
-| Ensure equipment is visible in the character sheet and inventory | [ ] |
-| Add equipment to merchant | [ ] |
+| Add stat bonuses from equipment items | [x] |
+| Prevent invalid equipment placement or duplicate slot misuse | [X] |
+| Ensure equipment is visible in the character sheet and inventory | [X] |
+| Add equipment to merchant | [X] |
 
 ## Phase 3: Build progression and economy (priority 3)
 --------------------------------------------
@@ -104,4 +104,60 @@
 4. Add more content and enemy variety
 5. Refactor and polish for release
 
-# Project Rules for balance :
+# Project Details :
+## Skills:
+- Constitution : use to counter attacks : is Hit_Value > 1d(CON) ?
+- Strength : use to deal damage : Damage = 1d(STR) if Hit
+- Focus : Percent limit to deal critical damage, it double the dice : if 1d100 <= focus -> Damage = 2d(STR) if Hit
+- Speed : Set how many round you can have per turn in opositions to your opponent speed. Add use to hit 1d(SPD)
+- Dexterity : Not added. but may be can be use to hit against speed ?
+
+## CR
+The challenge rating (CR) is a measure of the relative power of an encounter or creature. It helps to balance the encounter.
+
+for now cr = (CON + STR + SPD + FOC + LVL + MAX_LIFE/10) / 6
+
+## Rules for Balance:
+
+There is 5 Caracteristics that can be increased : CON, STR, SPD, FOC, MaxLife.
+
+Each level grant 1 skill point.
+
+If we consider a mean of 5 pts per Carac, it means that we have 25 points to distribute and then the maximum level is set to 25
+
+BUT, there is 2 other way to gain Skill point : Rarity and Equipment.
+
+# Rarity
+Rarity is set between S, A, B, C, D. Each rarity has a different effect on the skill points :
+- S : : +25 Skills point 
+- A : : +20 Skills point 
+- B : : +15 Skills point 
+- C : : +10 Skills point 
+- D : : +5 Skills point 
+
+# Rarity Probability Explanation
+Character and objects rarity is define randomly at its creation.
+The probability of the rarity is calculated using the Fibonacci sequence. The formula for calculating the probability of each rarity is:
+
+D = 1/phi^0 (where phi is the golden ratio, approximately 1.61803398875)
+C = D/phi
+B = C/phi
+A = B/phi
+S = A/phi
+
+In simpler terms, this means that:
+
+- S (rare) has a probability of about 8.6% 
+- A (uncommon) has a probability of about 15.3%
+- B (average) has a probability of about 23.9%
+- C (common) has a probability of about 38.2%
+- D (very common) has a probability of about 61.8%
+
+
+# Equipment
+
+There is 10 different equipement slots on a character : 
+'head', 'body', 'legs', 'feet', 'left hand', 'right hand', 'neck', 'ring1', 'ring2', 'belt'
+
+Each slot can hold an item that has a specific type, rarity and caracteristics. The equipment system allows the player to equip items on their character, which will affect their stats if they have the levels required.
+

@@ -24,7 +24,7 @@ class Item(Entity):
         self.maxlife        = 0
 
         self.level          = 0
-        self.maxlevel       = 20  
+        self.maxlevel       = 25  
         
         self.cr             = 0
         self.gold           = 0 # it's the price for the item, not the gold you get from it

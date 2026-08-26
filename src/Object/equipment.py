@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
-from src.Utils.random_generator import Rarity
+from src.Utils.random_generator import Rarity, random_rarity
 from src.Object.item import Item
 from src.Utils.display import ctxt, Colors, dprint
 
@@ -12,6 +12,16 @@ class Equipment(Item):
         super().__init__()
         self.types = list(Slot_table.keys())
 
+        self.constitution   = 0 # for defense
+        self.strength       = 0 # for attack
+        self.focus          = 0 # for critical hit
+        self.speed          = 0
+        self.life           = 0
+        self.maxlife        = 0
+
+        self.level          = 0
+        self.maxlevel       = 25  
+        
         self.equipable      = True
         self.usable         = False
         self.type           = None
@@ -22,20 +32,38 @@ class Equipment(Item):
         Generate a random Equipment.
         """
         eqpt = Equipment()
-
-        dprint(f"{type=}")
+        
         type = type if type in eqpt.types else None
         type = type if type is not None else random.choice(eqpt.types)
         eqpt.type          = type
-        dprint(f"debug type : {type}")
         
         eqpt.generate(level=level, rarity=rarity)
 
-        # debug
-        eqpt.name = f"{type}"
-        dprint(f"{eqpt.display_sheet()}")
-
         return eqpt
+    
+    def generate(self, level:int = None, rarity:Rarity = None):
+        """
+        Generates a random equipment with a random rarity and stats.
+        """
+        if rarity is None: # Set rarity to random value
+            self.rarity = random_rarity()
+        else:
+            self.rarity = rarity
+        # Add credits upgrade from rarity
+        rarity_credit = (self.rarity.value)*5
+
+        if level is None: # Set level to random value
+            self.level = random.randint(1, self.maxlevel)
+        else:
+            self.level = min(level, self.maxlevel)
+        # Add credits upgrade from level
+
+        rarity_credit = (self.rarity.value)*5
+        total_credit = rarity_credit + self.level
+
+        self.upgrade_stats(credit=total_credit, debug=False)
+        self.name_generator()
+        return self
 
     def equip(self, character):
         print(f"this {self.displayed_name()} must be equipped in {Slot_table[self.type]}\n")
@@ -109,7 +137,6 @@ class Equipment(Item):
         print(f"speed           -{self.speed} -> now -> {character.speed}")
         print(f"maxlife         -{self.maxlife} -> now -> {character.maxlife}\n")
 
-
     @staticmethod
     def equipment_mode(character):
         print(f"\n{character.displayed_name()} Equipment mode")
@@ -129,7 +156,6 @@ class Equipment(Item):
                         equipment.equip(character)
                     else:
                         print(f"\nLevel too low for this equipment, you need to be level {equipment.level} to equip it !\n")
-                        equipment.equip(character) # debug
 
                     if len(character.inventory) < 1 :
                         break
@@ -155,14 +181,81 @@ class Equipment(Item):
                     else:
                         character.equipment[used_slots[index]].unequip(character,used_slots[index])
 
-                        
-
 
             elif action.lower() == 'q':
                 break
         
         return
 
+    def name_generator(self):
+        """
+        Generate the name of the object depending of the Skills
+        """
+        name = self.type
+
+        # seek for a max caracteristics : 
+        stats = {1: "constitution", 2: "strength", 3: "focus", 4: "speed", 5: "maxlife"}
+        max_stat_value = 0
+        stats_list = []
+
+        for key in stats.keys():
+
+            value = getattr(self, stats[key])
+            if stats[key] == 'maxlife':
+                value = value/10
+
+            if value > max_stat_value:
+                max_stat_value = getattr(self, stats[key])
+                stats_list = [stats[key]]
+
+            elif value == max_stat_value:
+                stats_list.append(stats[key])
+
+        if len(stats_list) == 1:
+            if stats_list[0] == 'maxlife':
+                name += ' of Life'
+            else:
+                name += f" of {stats_list[0]}"
+        elif len(stats_list) > 1:
+            name = f"Balanced " + name
+        self.name = name
+        return
+
+
+    def upgrade_stats(self, credit=0, randomize=True, debug=False):
+        """
+        Upgrade the entity's stats.
+        Allows the entity to upgrade n stats randomly.
+        """
+        stats = {1: "constitution", 2: "strength", 3: "focus", 4: "speed", 5: "maxlife"}
+        while credit > 0:
+            if randomize:
+                action = random.randint(1, 5)
+                if debug:
+                    print(f"{self.displayed_name()} randomly chose to upgrade {stats[action]}!")
+            
+            if action == 1:
+                self.constitution += 1
+            elif action == 2:
+                self.strength += 1
+            elif action == 3:
+                self.focus += 1
+            elif action == 4:
+                self.speed += 1
+            elif action == 5:
+                self.maxlife    += 10
+                self.life       += 10
+            credit -= 1
+            if debug:
+                print(f"{self.displayed_name()} upgraded {stats[action]} to {getattr(self, stats[action])}!")
+        self.cr = self.calculate_cr()
+        if debug:
+            print(f"{self.displayed_name()} CR is now {self.cr}!")
+            print(self.display_stats(xp=True))
+
+        # Get the price !
+        all_stats_sum = self.maxlife/10 + self.rarity.value*5 + self.constitution + self.speed + self.strength + self.focus + self.level*4
+        self.gold = random.randint(int(all_stats_sum * 0.4), int(all_stats_sum * 1.5))
 
 Slot_table={
     "Helmet":       ["head"],

@@ -48,19 +48,6 @@ def random_rarity():
     )[0]
     return rarity
 
-def generate_character():
-    from src.Object.character import Character
-
-    rarity = random_rarity()
-
-    stats = {
-        'strength': random.randint(0, 1)    + stat_modifier(rarity),
-        'speed':    random.randint(1, 2)    + stat_modifier(rarity),
-        'life':     random.randint(1, 10)   + stat_modifier(rarity),
-    }
-    character = Character(stats['strength'], stats['speed'], stats['life'], rarity)
-    return character
-
 def stat_modifier(rarity):
     """
     Returns a tuple of stat modifiers based on the rarity.
