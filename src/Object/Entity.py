@@ -331,8 +331,9 @@ class Entity:
                 return
             self.level += 1
             credits += 1
-        print(f"{self.displayed_name()} leveled up! New level: {self.level}")
-        self.upgrade_stats(credit=credits, randomize=randomize, debug=debug)
+        if credits > 0 :
+            print(f"{self.displayed_name()} leveled up! New level: {self.level}")
+            self.upgrade_stats(credit=credits, randomize=randomize, debug=debug)
 
         return 
     

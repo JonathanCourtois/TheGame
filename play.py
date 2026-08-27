@@ -67,7 +67,7 @@ def main():
                 character.heal(some_life)
 
             elif encounter_seed < 0.6:
-                print("You found nothing in this peacefull world.")
+                print("You found nothing in this peaceful world.")
 
             elif encounter_seed < 0.8:
                 print("You found a merchant!")
