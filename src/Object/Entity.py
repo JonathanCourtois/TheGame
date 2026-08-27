@@ -6,7 +6,7 @@ import random
 import math
 import re
 from src.Utils.random_generator import random_rarity, Rarity
-from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
+from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint
 
 class Entity:
     def __init__(self):

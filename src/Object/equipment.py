@@ -114,13 +114,14 @@ class Equipment(Item):
         character.focus         += self.focus
         character.speed         += self.speed
         character.maxlife       += self.maxlife
+        character.life          += self.maxlife
 
         print(f"\n{self.displayed_name()} has been equipped.")
-        print(f"constitution    {self.constitution:+d} -> now -> {character.constitution}")
-        print(f"strength        {self.strength:+d} -> now -> {character.strength}")
-        print(f"focus           {self.focus:+d} -> now -> {character.focus}")
-        print(f"speed           {self.speed:+d} -> now -> {character.speed}")
-        print(f"maxlife         {self.maxlife:+d} -> now -> {character.maxlife}\n")
+        print(f"constitution    {self.constitution:+3d} -> now -> {character.constitution}")
+        print(f"strength        {self.strength:+3d} -> now -> {character.strength}")
+        print(f"focus           {self.focus:+3d} -> now -> {character.focus}")
+        print(f"speed           {self.speed:+3d} -> now -> {character.speed}")
+        print(f"maxlife         {self.maxlife:+3d} -> now -> {character.maxlife}\n")
 
     def remove_attribute_to(self, character):
 
@@ -129,13 +130,14 @@ class Equipment(Item):
         character.focus         -= self.focus
         character.speed         -= self.speed
         character.maxlife       -= self.maxlife
+        character.life          = character.life-self.maxlife if character.life-self.maxlife > 1 else 1
 
         print(f"\n{self.name} has been unequipped.")
-        print(f"constitution    -{self.constitution} -> now -> {character.constitution}")
-        print(f"strength        -{self.strength} -> now -> {character.strength}")
-        print(f"focus           -{self.focus} -> now -> {character.focus}")
-        print(f"speed           -{self.speed} -> now -> {character.speed}")
-        print(f"maxlife         -{self.maxlife} -> now -> {character.maxlife}\n")
+        print(f"constitution    -{self.constitution:+3d} -> now -> {character.constitution}")
+        print(f"strength        -{self.strength:+3d} -> now -> {character.strength}")
+        print(f"focus           -{self.focus:+3d} -> now -> {character.focus}")
+        print(f"speed           -{self.speed:+3d} -> now -> {character.speed}")
+        print(f"maxlife         -{self.maxlife:+3d} -> now -> {character.maxlife}\n")
 
     @staticmethod
     def equipment_mode(character):

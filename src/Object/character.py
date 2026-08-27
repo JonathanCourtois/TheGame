@@ -328,7 +328,6 @@ class Character(Entity):
                                 character_name = characters[character_uid].displayed_name()
                                 print(f"Loading character: {character_name}")
 
-                                print(f"{characters[character_uid]} - {characters[character_uid].uid=}")
                                 return characters[character_uid]
                             else:
                                 print("Invalid index. No character loaded.")

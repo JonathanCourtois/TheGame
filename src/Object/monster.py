@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from src.Utils.random_generator import random_rarity, Rarity
 import random
-from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors
+from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint
 from src.Object.entity import Entity
 import pickle as pkl
 
@@ -44,8 +44,8 @@ class Monster(Entity):
         self.name = name
         super().generate(level=level, rarity=rarity)
 
-        all_stats_sum = (self.strength + self.speed + self.life + self.constitution + self.focus + self.rarity.value)/10
-        self.gold = random.randint(int(all_stats_sum * 0.3), int(all_stats_sum * 1.5))
+        all_stats_sum = (self.constitution + self.speed + self.strength + self.focus + self.maxlife + self.level + self.rarity.value)
+        self.gold = random.randint(self.level, int(all_stats_sum * 1.5))
         return self
 
     def generate_ranged(self, Character, range:int=1):

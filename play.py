@@ -7,17 +7,18 @@ import src.Utils.fight as fight
 import src.Utils.display as dsp
 import os
 
+version = "v0.2"
 
 def main():
 
     # Initialize the game
-    print("\n### Welcome to The Game! ###\n\n")
-    print(" DEV MSG TO DEV : ADD Utils/message.py where there will be all the messages to display.\n")
+    print(f"\n### Welcome to The Game! | {version} | ###\n\n")
+    dsp.dprint(" DEV MSG TO DEV : ADD Utils/message.py where there will be all the messages to display.\n")
 
     character = Character().manage_save()
     if character is None:
         character = Character().generate()
-        print(f"New character created:\n")
+        print(f"\nNew character created:\n")
 
     # Display character stats
     print(character.display_sheet())
@@ -25,7 +26,9 @@ def main():
     # Start the game loop (placeholder for now)
     while True:
         action = input("\nWhat would you like to do? (s: stats, i: inventory, e: explore, r: rest, rename: rename character, exit: exit) ")
-        print("")
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"### THE GAME | {version} | ###\n")
+
         if action.lower() == 'exit':
             character.save()
             print("\n### Exiting the game. Goodbye! ###")
@@ -37,7 +40,7 @@ def main():
             print(f"Character renamed to {character.displayed_name()}!")
 
         elif action.lower() == 's':
-            print(f"Character Stats:\n{character.display_sheet()}")
+            print(f"\nCharacter Stats:\n{character.display_sheet()}")
 
         elif action.lower() == 'i':
             character.manage_inventory()
@@ -124,6 +127,7 @@ def main():
 
         else:
             print("Action not recognized. Please try again.")
+
 
 if __name__ == "__main__":
     main()

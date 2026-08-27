@@ -2,7 +2,7 @@ from src.Object.character import Character
 from src.Object.item import Item
 from src.Object.equipment import Equipment
 import src.Utils.random_generator as randgen
-from src.Utils.display import ctxt, Colors
+from src.Utils.display import ctxt, Colors, dprint
 import random
 
 class Merchant(Character):
@@ -28,7 +28,7 @@ class Merchant(Character):
         Generate a random store for the merchant.
         """
         self.customer = customer
-        lvl_modifier = random.randint(-5, 5)
+        lvl_modifier = random.randint(-6, 1)
         level = int(self.customer.level+lvl_modifier)if int(self.customer.level+lvl_modifier)< self.maxlevel else self.maxlevel
         level = int(level if level > 0 else 1)
         super().generate(level=level)
@@ -36,9 +36,9 @@ class Merchant(Character):
         number_of_item = random.randint(1, 10)
         for i in range(number_of_item):
             
-            local_lvl_modifier = random.randint(-2, 2)
+            local_lvl_modifier = random.randint(-4, 2)
             local_lvl_modifier = max(1, self.level+local_lvl_modifier)
-            local_lvl_modifier = min(self.maxlevel, self.level+local_lvl_modifier)
+            local_lvl_modifier = min(self.maxlevel, local_lvl_modifier)
             if random.randint(0, 1) == 1:
                 store.append(Item.generate_random_item(level=local_lvl_modifier))
             else:
@@ -52,7 +52,7 @@ class Merchant(Character):
         """
         print(f"{self.name}'s lvl {self.level} Store:")
         for i, item in enumerate(self.store):
-            print(f"ID : {i:2d} : {item.displayed_name():<25s} : lvl {item.level:2d} : {item.rarity.name} : {item.gold} gold")
+            print(f"ID : {i:2d} : {item.displayed_name():<40s} : lvl {item.level:2d} : {item.rarity.name} : {item.gold} gold")
 
     def dialogue(self):
         """
