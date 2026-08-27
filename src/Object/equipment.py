@@ -123,6 +123,8 @@ class Equipment(Item):
         print(f"speed           {self.speed:+3d} -> now -> {character.speed}")
         print(f"maxlife         {self.maxlife:+3d} -> now -> {character.maxlife}\n")
 
+        character.cr = character.calculate_cr()
+
     def remove_attribute_to(self, character):
 
         character.constitution  -= self.constitution
@@ -138,6 +140,8 @@ class Equipment(Item):
         print(f"focus           -{self.focus:+3d} -> now -> {character.focus}")
         print(f"speed           -{self.speed:+3d} -> now -> {character.speed}")
         print(f"maxlife         -{self.maxlife:+3d} -> now -> {character.maxlife}\n")
+        
+        character.cr = character.calculate_cr()
 
     @staticmethod
     def equipment_mode(character):
@@ -265,7 +269,7 @@ Slot_table={
     "Pant":         ["legs"],
     "Shoes":        ["feet"],
     "Gantlet":      ["left hand", "right hand"],
-    "Neckless":     ["neck"],
+    "Necklace":     ["neck"],
     "Belt":         ["belt"],
     "Ring":         ["ring1", "ring2"],
     "Sword":        ["left hand", "right hand"],

@@ -8,6 +8,7 @@ import src.Utils.display as dsp
 import os
 
 version = "v0.2"
+difficulty = 0
 
 def main():
 
@@ -18,6 +19,8 @@ def main():
     character = Character().manage_save()
     if character is None:
         character = Character().generate()
+        
+        os.system('cls' if os.name == 'nt' else 'clear')
         print(f"\nNew character created:\n")
 
     # Display character stats
@@ -65,7 +68,7 @@ def main():
                 character.gold += gold
 
             elif encounter_seed < 0.4:
-                print("You found a healing plant!")
+                print("You found a healing plant!\n")
                 some_life = randgen.get_heal()
                 character.heal(some_life)
 
@@ -73,14 +76,13 @@ def main():
                 print("You found nothing in this peaceful world.")
 
             elif encounter_seed < 0.8:
-                print("You found a merchant!")
+                print("You found a merchant!\n")
                 merchant = Merchant().generate(character)
                 merchant.trade(character)
 
             else:
                 print("You encountered a monster!")
-                monster = Monster().generate_ranged(character, range=character.level-1)
-                print(f"{monster.display_sheet()}")
+                monster = Monster().generate_ranged(character, range=difficulty)
                 fight.fight([character, monster])
 
         # DEBUG

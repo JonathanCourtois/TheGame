@@ -20,7 +20,7 @@ class Merchant(Character):
 
     def trade(self, customer):
         self.customer = customer
-        print(f"{self.name}: {self.customer.displayed_name()}, Welcome to my store!")
+        print(f"{self.name}:\n\t{self.customer.displayed_name()}, Welcome to my store!^n")
         self.dialogue()
 
     def generate(self, customer):
@@ -50,9 +50,10 @@ class Merchant(Character):
         """
         Display the name and price of the items in the store.
         """
-        print(f"{self.name}'s lvl {self.level} Store:")
+        print(f"{self.name}'s lvl {self.level} Store:\n")
         for i, item in enumerate(self.store):
-            print(f"ID : {i:2d} : {item.displayed_name():<40s} : lvl {item.level:2d} : {item.rarity.name} : {item.gold} gold")
+            gold_colored = f"{ctxt(f'{item.gold}', Colors.GREEN)}" if self.customer.gold >= item.gold else f"{ctxt(f'{item.gold}', Colors.RED)}"
+            print(f"ID : {i:2d} : {item.displayed_name():<40s} : lvl {item.level:2d} : {item.rarity.name} : {gold_colored} gold")
 
     def dialogue(self):
         """
@@ -92,14 +93,14 @@ class Merchant(Character):
             if len(self.customer.inventory) >= 4:
                 print(f"{ctxt("You can't carry more than 4 items.",Colors.RED)}")
             else:
-                print(f"You bought {item.displayed_name()} for {ctxt(f'{item.gold}',Colors.YELLOW)} gold.")
+                print(f"\nYou bought {item.displayed_name()} for {ctxt(f'{item.gold}',Colors.YELLOW)} gold.\n")
                 # Add the item to the character's inventory
                 self.customer.inventory.append(item)
                 # character.inventory.append(item)
                 # Remove the item from the store
                 self.store.pop(item_index)
                 self.customer.gold -= item.gold
-                print(f"You have {ctxt(f'{self.customer.gold}',Colors.YELLOW)} gold left.")
+                print(f"You have {ctxt(f'{self.customer.gold}',Colors.YELLOW)} gold left.\n")
         else:
             print("You don't have enough gold.")
 

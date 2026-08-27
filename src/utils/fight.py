@@ -25,6 +25,7 @@ def fight(fighters_list:list):
     # Initialize fighters list with each item of list being a list with :
     # [0:fighter, 1:speed_counter, 2:flee, 3:open_inventory]
     for entity in fighters_list:
+        print(f"{entity.display_sheet()}")
         fighters.append([entity, 0, False, False])
     # Fight loop
     max_speed = max(entity.speed for entity, _, _, _ in fighters)

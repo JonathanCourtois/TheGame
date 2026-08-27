@@ -203,8 +203,6 @@ class Entity:
             if len(visible) > width:
                 parts = re.split(visible, s)
                 s = parts[0] + visible[:width] + parts[1]
-                print(s)
-            
             return s
 
         pad_total = width - len(visible)

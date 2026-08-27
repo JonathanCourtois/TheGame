@@ -51,7 +51,7 @@ class Monster(Entity):
     def generate_ranged(self, Character, range:int=1):
         charac_cr = Character.calculate_cr()
         self.generate(name=f"{self.name}")
-        while self.cr > charac_cr + range:
+        while self.cr > charac_cr + range or self.cr < charac_cr - 3:
 
             self.generate(name=f"{self.name}")
             # print(f"Generated monster {self.name} with CR {self.cr} and Character CR {charac_cr} with range {range}")
