@@ -39,12 +39,15 @@
 
 | Task | Status |
 | --- | --- |
-| Balance monster difficulty against player character level/CR | [ ] |
-| Improve gold rewards and merchant pricing | [ ] |
-| Improve item rarity scaling and sell/buy logic | [ ] |
+| Balance monster difficulty against player character level/CR | [X] |
+| Improve gold rewards and merchant pricing | [X] |
+| Improve item rarity scaling and sell/buy logic | [X] |
 | Implement level-up bonuses in a readable format | [X] |
-| Improve experience and reward curves for exploration and combat | [ ] |
-| Define run progression: enemy scaling, item quality, merchant availability | [ ] |
+| Improve experience and reward curves for exploration and combat | [X] |
+| Monster can have equipment | [X] |
+| Monster can have item | [ ] |
+| Monster can drop equipment and item if dead | [ ] |
+| Define run progression: enemy scaling, item quality, merchant availability | [X] |
 
 ## Phase 4: Expand content and world interactions (priority 4)
 --------------------------------------------
@@ -52,13 +55,13 @@
 | Task | Status |
 | --- | --- |
 | Add more monster types and templates | [ ] |
-| Add persistant monster that kill previous ca | [ ] |
+| Add persistant monster that kill previous caracter | [ ] |
 | Add more consumable item types and chest variations | [ ] |
-| Create distinct event types: combat encounters | [ ] |
+| Create distinct event types: combat encounters | [X] |
 | Create distinct event types: treasures | [ ] |
 | Create distinct event types: traps | [ ] |
-| Create distinct event types: merchants | [ ] |
-| Create distinct event types: healing events | [ ] |
+| Create distinct event types: merchants | [X] |
+| Create distinct event types: healing events | [X] |
 | Create distinct event types: optional challenges | [ ] |
 | Add dungeon or zone progression | [ ] |
 | Add a world map or encounter sequence if the game expands beyond a simple loop | [ ] |
@@ -69,7 +72,7 @@
 | Task | Status |
 | --- | --- |
 | Improve display and UI formatting | [ ] |
-| Add a proper naming flow and character summary | [ ] |
+| Add a proper naming flow and character summary | [X] |
 | Improve logging for actions and combat state | [ ] |
 | Add achievements or progression goals | [ ] |
 | Add proper error handling and player feedback for edge cases | [ ] |
