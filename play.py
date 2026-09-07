@@ -80,6 +80,10 @@ def main():
                 character = encounter_monster(character)
 
         # DEBUG
+        elif action.lower() == 'monster':
+            monster = Monster().generate_ranged(character, range=difficulty)
+            print(monster.display_sheet(equipment=True, inventory=True, xp=True))
+            
         elif action.lower() == 'level':
             action = input("Enter the level you want to reach: ")
             try:
@@ -118,7 +122,6 @@ def main():
             except ValueError:
                 print("Invalid input. Please enter a number.")  
             character.Check_level(randomize=False, debug=False)
-
 
         elif action.lower() == 'fight': # debug
             character = encounter_monster(character)

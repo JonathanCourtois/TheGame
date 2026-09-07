@@ -1,10 +1,12 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from src.Utils.random_generator import random_rarity, Rarity
+from src.Utils.random_generator import random_rarity, Rarity, roll_d
 import random
 from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint, fside
 from src.Object.entity import Entity
+from src.Object.equipment import Equipment
+
 import pickle as pkl
 
 class Monster(Entity):
@@ -38,7 +40,36 @@ class Monster(Entity):
         Returns the name of the character.
         """
         return color_text_from_rarity(self.name, self.rarity)
-    
+            
+    # def display_equipment(self, name_only=False):
+    #     """
+    #     Display the monster's equipment.
+    #     """
+    #     inv_str = "equipment:\n"
+    #     if name_only:
+    #         for i, item in enumerate(self.equipment):
+    #             if self.equipment[item] is not None:
+    #                 raise NotImplementedError("Display equipment not implemented yet.")
+    #             else:
+    #                 inv_str += f"{item:^12s} : {'Empty':^16s} | "
+    #                 if item in ['feet', 'right hand', 'belt']:
+    #                     inv_str += "\n"
+    #     else:   
+    #         raise NotImplementedError("Display equipment not implemented yet.")
+    #     return inv_str
+
+    def get_equipment_name(self, slot):
+        """
+        Get the name of the equipment in the given slot.
+        """
+        if slot in self.equipment:
+            if self.equipment[slot] is not None:
+                return self.equipment[slot].displayed_name().strip()
+            else:
+                return "----"
+        else:
+            raise ValueError(f"Invalid equipment slot: {slot}, valid slots are {list(self.equipment.keys())}")
+        
     def attack(self):
         """
         Roll attack stats.
@@ -67,9 +98,20 @@ class Monster(Entity):
         self.__init__()
         self.name = name
         super().generate(level=level, rarity=rarity)
-
-        all_stats_sum = (self.constitution + self.speed + self.strength + self.focus + self.maxlife + self.level + self.rarity.value)
+        # Loot :
+        # gold based on their level and statisctics
+        all_stats_sum = (self.constitution + self.speed + self.strength + self.focus + self.maxlife/10 + self.level + self.rarity.value)
         self.gold = random.randint(self.level, int(all_stats_sum * 1.5))
+
+
+        # Equipe item and or equipment:
+        for slot in self.equipment.keys():
+            if roll_d(100) <= 3 :
+                eqpt = Equipment.generate_random_equipment(level=random.randint(1,self.level), rarity=None, type=slot)
+                dprint(eqpt.display_sheet())
+                eqpt.equip(self, random_choice=True)
+
+
         return self
 
     def generate_ranged(self, Character, range:int=1):
@@ -78,7 +120,7 @@ class Monster(Entity):
         while self.cr > charac_cr + range or self.cr < charac_cr - 3:
 
             self.generate(name=f"{self.name}")
-            # print(f"Generated monster {self.name} with CR {self.cr} and Character CR {charac_cr} with range {range}")
+            dprint(f"Generated monster {self.name} with CR {self.cr} and Character CR {charac_cr} with range {range}")
 
         return self
 

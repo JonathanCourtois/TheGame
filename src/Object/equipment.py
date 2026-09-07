@@ -10,7 +10,7 @@ from src.Utils.display import ctxt, Colors, dprint
 class Equipment(Item):
     def __init__(self):
         super().__init__()
-        self.types = list(Slot_table.keys())
+        self.types = list(fill_slot_table(Equipment_table).keys())
 
         self.constitution   = 0 # for defense
         self.strength       = 0 # for attack
@@ -32,10 +32,12 @@ class Equipment(Item):
         Generate a random Equipment.
         """
         eqpt = Equipment()
+        Slots_Table = fill_slot_table(Equipment_table)
+        type = type if type in Slots_Table.keys() else None
         
-        type = type if type in eqpt.types else None
         type = type if type is not None else random.choice(eqpt.types)
-        eqpt.type          = type
+        
+        eqpt.type          = random.choice(Slots_Table[type])
         
         eqpt.generate(level=level, rarity=rarity)
 
@@ -65,13 +67,14 @@ class Equipment(Item):
         self.name_generator()
         return self
 
-    def equip(self, character):
-        print(f"this {self.displayed_name()} must be equipped in {Slot_table[self.type]}\n")
+    def equip(self, character, random_choice=False):
+        if not random_choice:
+            print(f"this {self.displayed_name()} must be equipped in {Equipment_table[self.type]}\n")
 
         # check if slots are available
         available_slots = []
         used_slots      = []
-        for slot in Slot_table[self.type]:
+        for slot in Equipment_table[self.type]:
             if character.equipment[slot] is None:
                 available_slots.append(slot)
             else:
@@ -83,17 +86,21 @@ class Equipment(Item):
 
         elif len(available_slots) > 0:
             idx = 0
-            if len(available_slots) > 1:
+            if len(available_slots) > 1 and not random_choice:
                 for i, slot in enumerate(available_slots):
                     print(f"{i} - {slot}")
                 idx = int(input(f"\nEnter the index of the slot you want to use: "))
                 if idx < 0 or idx >= len(available_slots):
                         print("Invalid index.")
+
+            elif len(available_slots) > 1 and random_choice:
+                idx = random.randint(1,len(available_slots))-1
             
             slot = available_slots[idx]
             character.equipment[slot] = self
-            self.add_attribute_to(character)
-            character.remove_from_inventory(self)
+            self.add_attribute_to(character, verbose = not random_choice)
+            if not random_choice:
+                character.remove_from_inventory(self)
 
         else:
             raise NotImplementedError
@@ -107,7 +114,8 @@ class Equipment(Item):
             character.equipment[slot] = None
         return
 
-    def add_attribute_to(self, character):
+    def add_attribute_to(self, character, verbose=True):
+        # Add attributes to the character based
 
         character.constitution  += self.constitution
         character.strength      += self.strength
@@ -116,12 +124,13 @@ class Equipment(Item):
         character.maxlife       += self.maxlife
         character.life          += self.maxlife
 
-        print(f"\n{self.displayed_name()} has been equipped.")
-        print(f"constitution    {self.constitution:+3d} -> now -> {character.constitution}")
-        print(f"strength        {self.strength:+3d} -> now -> {character.strength}")
-        print(f"focus           {self.focus:+3d} -> now -> {character.focus}")
-        print(f"speed           {self.speed:+3d} -> now -> {character.speed}")
-        print(f"maxlife         {self.maxlife:+3d} -> now -> {character.maxlife}\n")
+        if verbose:
+            print(f"\n{self.displayed_name()} has been equipped.")
+            print(f"constitution    {self.constitution:+3d} -> now -> {character.constitution}")
+            print(f"strength        {self.strength:+3d} -> now -> {character.strength}")
+            print(f"focus           {self.focus:+3d} -> now -> {character.focus}")
+            print(f"speed           {self.speed:+3d} -> now -> {character.speed}")
+            print(f"maxlife         {self.maxlife:+3d} -> now -> {character.maxlife}\n")
 
         character.cr = character.calculate_cr()
 
@@ -263,7 +272,7 @@ class Equipment(Item):
         all_stats_sum = self.maxlife/10 + self.rarity.value*5 + self.constitution + self.speed + self.strength + self.focus + self.level*4
         self.gold = random.randint(int(all_stats_sum * 0.4), int(all_stats_sum * 1.5))
 
-Slot_table={
+Equipment_table={
     "Helmet":       ["head"],
     "Chest plate":  ["body"],
     "Pant":         ["legs"],
@@ -275,24 +284,13 @@ Slot_table={
     "Sword":        ["left hand", "right hand"],
     "Shield":       ["left hand", "right hand"]
     }
-    # def create_name(self):
 
 
-    # # deprecated
-    # def equip(self, slot, item):
-    #     if slot in self.types:
-    #         self.types[slot] = item
-    #         return f"Equipped {item} to {slot}."
-    #     else:
-    #         return "Invalid slot."
+def fill_slot_table(Equipment_table):
+    Slots_Table = {'head': [], 'body': [], 'legs': [], 'feet': [], 'left hand': [], 'right hand': [], 'neck': [], 'ring1': [], 'ring2': [], 'belt': []}
+    for item_type, slots in Equipment_table.items():
+        for eq_slot in slots:
+            if eq_slot in Slots_Table.keys():
+                Slots_Table[eq_slot].append(item_type)
 
-    # def unequip(self, slot):
-    #     if slot in self.types and self.types[slot] is not None:
-    #         item = self.types[slot]
-    #         self.types[slot] = None
-    #         return f"Unequipped {item} from {slot}."
-    #     else:
-    #         return "No item to unequip from this slot."
-
-    # def get_equipment(self):
-    #     return {slot: item for slot, item in self.types.items() if item is not None}
+    return Slots_Table

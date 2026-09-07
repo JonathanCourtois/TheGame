@@ -102,7 +102,6 @@ class Character(Entity):
 
         return sheet
 
-## Reworked until Here : Idea : Uniform Information display to only have Sheet style display ##
     def manage_inventory(self):
         """
         Manage the character's inventory.
