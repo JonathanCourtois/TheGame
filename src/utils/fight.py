@@ -6,6 +6,7 @@ import random
 from src.Object.character import Character
 from src.Object.monster import Monster
 from src.Utils.display import ctxt, Colors, timed_input
+from src.Utils.random_generator import random_rarity, roll_d, roll_n_d
 
 def fight(fighters_list:list):
     """
@@ -45,8 +46,8 @@ def fight(fighters_list:list):
                 elif fighter[2]:    # try to flee
                     print(f"{fighter[0].displayed_name()} tried to flee!")
                     # to flee, the character must succeed a d'speed' roll facing the monster's d'speed' roll
-                    flee_roll    = fighter[0].roll_d(fighter[0].speed)
-                    opponent_roll = fighters[1-i][0].roll_d(fighters[1-i][0].speed)
+                    flee_roll    = roll_d(fighter[0].speed)
+                    opponent_roll = roll_d(fighters[1-i][0].speed)
                     if flee_roll > opponent_roll:
                         print(f"{fighter[0].displayed_name()} fled successfully!")
                         return
@@ -68,7 +69,7 @@ def fight(fighters_list:list):
                         # action = timed_input("", timeout=1)
                 elif isinstance(fighter[0], Monster):
                     if fighter[0].life < fighter[0].maxlife / 4:
-                        flee_roll = fighter[0].roll_d(100)
+                        flee_roll = roll_d(100)
                         if flee_roll < fighter[0].life * 100 / fighter[0].maxlife:
                             action = "f"
                     elif not(combat_log == "" or combat_log == "\n"):

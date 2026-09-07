@@ -3,9 +3,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
-import re
-from src.Utils.random_generator import random_rarity, Rarity
-from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint, strip_ansi, center_ansi, fside
+from src.Utils.random_generator import random_rarity, Rarity, roll_d, roll_n_d
+from src.Utils.display import color_text_from_rarity, ctxt, Colors, dprint, center_ansi, fside
 
 class Entity:
     def __init__(self):
@@ -188,32 +187,18 @@ class Entity:
         """
         return color_text_from_rarity(f'{self.name}', self.rarity)
 
-    def roll_d(self, sides):
-        """
-        Roll a dice with a given number of sides [1, sides].
-        Returns the result of the roll.
-        """
-        return random.randint(1, sides)
-
-    def roll_n_d(self, n, sides):
-        """
-        Roll n dice with a given number of sides.
-        Returns the result of the roll.
-        """
-        return sum(self.roll_d(sides) for _ in range(n))
-
     def attack(self, combat_log: str = "", log_side: str = 'None'):
         """
         Roll attack stats.
         Returns a tuple of hit and damage.
         """
-        hit         = self.roll_d(self.speed)
-        crit        = True if self.roll_d(100) <= self.focus else False
+        hit         = roll_d(self.speed)
+        crit        = True if roll_d(100) <= self.focus else False
         damage      = 0
         if hit > 0:
-            damage  = self.roll_d(self.strength)
+            damage  = roll_d(self.strength)
             if crit:
-                damage  += self.roll_d(self.strength)
+                damage  += roll_d(self.strength)
                 crit_log = f"{ctxt('CRIT Hit!',Colors.RED)}"
             else:
                 crit_log = f"{ctxt('Hit.',Colors.RED)}"
@@ -230,7 +215,7 @@ class Entity:
         Roll the defence against an attack.
         If the hit is greater than the CA, reduce life by damage.
         """
-        const_check = self.roll_d(self.constitution)
+        const_check = roll_d(self.constitution)
         combat_log  = combat_log
         damage_log  = ""
         life_log    = ""

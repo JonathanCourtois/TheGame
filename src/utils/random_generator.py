@@ -48,6 +48,20 @@ def random_rarity():
     )[0]
     return rarity
 
+def roll_d(sides):
+        """
+        Roll a dice with a given number of sides [1, sides].
+        Returns the result of the roll.
+        """
+        return random.randint(1, sides)
+
+def roll_n_d(n, sides):
+    """
+    Roll n dice with a given number of sides.
+    Returns the result of the roll.
+    """
+    return sum(roll_d(sides) for _ in range(n))
+
 def stat_modifier(rarity):
     """
     Returns a tuple of stat modifiers based on the rarity.
