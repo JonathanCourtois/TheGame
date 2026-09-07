@@ -28,7 +28,7 @@ def main():
 
     # Start the game loop (placeholder for now)
     while True:
-        action = input("\nWhat would you like to do? (s: stats, i: inventory, e: explore, r: rest, rename: rename character, exit: exit) ")
+        action = input("\nWhat would you like to do? (s: stats, i: inventory, e: explore, r: rest, rename: rename character, exit: exit)\n")
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"### THE GAME | {version} | ###\n")
 
@@ -68,22 +68,16 @@ def main():
                 character.gold += gold
 
             elif encounter_seed < 0.4:
-                print("You found a healing plant!\n")
-                some_life = randgen.get_heal()
-                character.heal(some_life)
+                character = encounter_healing_plant(character)
 
             elif encounter_seed < 0.6:
                 print("You found nothing in this peaceful world.")
 
             elif encounter_seed < 0.8:
-                print("You found a merchant!\n")
-                merchant = Merchant().generate(character)
-                merchant.trade(character)
+                character = encounter_merchant(character)
 
             else:
-                print("You encountered a monster!")
-                monster = Monster().generate_ranged(character, range=difficulty)
-                fight.fight([character, monster])
+                character = encounter_monster(character)
 
         # DEBUG
         elif action.lower() == 'level':
@@ -110,10 +104,14 @@ def main():
             except ValueError:
                 print("Invalid input. Please enter a number.")  
         
+        elif action.lower() == 'fight': # debug
+            character = encounter_monster(character)
+
         elif action.lower() == 'merchant': # debug
-            print("You found a merchant!")
-            merchant = Merchant().generate(character)
-            merchant.trade(character)
+            character = encounter_merchant(character)
+
+        elif action.lower() == 'plant':
+            character = encounter_healing_plant(character)
         
         elif action.lower() == 'spawn item': # debug
             item = randgen.generate_item()
@@ -130,6 +128,23 @@ def main():
         else:
             print("Action not recognized. Please try again.")
 
+def encounter_merchant(character):
+    print("You found a merchant!")
+    merchant = Merchant().generate(character)
+    merchant.trade(character)
+    return character
+
+def encounter_healing_plant(character):
+    print("You found a healing plant!\n")
+    some_life = randgen.get_heal()
+    character.heal(some_life)
+    return character
+
+def encounter_monster(character):
+    print("You encountered a monster!")
+    monster = Monster().generate_ranged(character, range=difficulty)
+    fight.fight([character, monster])
+    return character
 
 if __name__ == "__main__":
     main()

@@ -20,8 +20,9 @@ class Merchant(Character):
 
     def trade(self, customer):
         self.customer = customer
-        print(f"{self.name}:\n\t{self.customer.displayed_name()}, Welcome to my store!^n")
+        print(f"{self.name}:\n\t{self.customer.displayed_name()}, Welcome to my store!\n")
         self.dialogue()
+        return
 
     def generate(self, customer):
         """
@@ -75,6 +76,7 @@ class Merchant(Character):
             
         elif action.lower() == 'e':
             print("Goodbye!")
+        return
         
     def buy_item(self):
         """
