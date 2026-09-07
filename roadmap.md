@@ -42,7 +42,7 @@
 | Balance monster difficulty against player character level/CR | [ ] |
 | Improve gold rewards and merchant pricing | [ ] |
 | Improve item rarity scaling and sell/buy logic | [ ] |
-| Implement level-up bonuses in a readable format | [ ] |
+| Implement level-up bonuses in a readable format | [X] |
 | Improve experience and reward curves for exploration and combat | [ ] |
 | Define run progression: enemy scaling, item quality, merchant availability | [ ] |
 

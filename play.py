@@ -103,7 +103,23 @@ def main():
                     print("Gold must be greater than 0.")
             except ValueError:
                 print("Invalid input. Please enter a number.")  
-        
+
+        elif action.lower() == 'xp':
+            
+            print(f"\nCharacter Stats:\n{character.display_sheet()}")
+            action = input("Enter the amount of xp you want to add: ")
+            try:
+                xp = int(action)
+                if xp > 0:
+                    character.xp += xp
+                    print(f"Added {xp} xp to character!")
+                else:
+                    print("Xp must be greater than 0.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")  
+            character.Check_level(randomize=False, debug=False)
+
+
         elif action.lower() == 'fight': # debug
             character = encounter_monster(character)
 

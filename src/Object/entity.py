@@ -336,7 +336,11 @@ class Entity:
         Upgrade the entity's stats.
         Allows the entity to upgrade n stats randomly.
         """
-        stats = {1: "constitution", 2: "strength", 3: "focus", 4: "speed", 5: "maxlife"}
+        stats = {1: f"constitution\t{self.constitution:3d} -> {self.constitution+1:3d}\tChance to block an attack.", 
+                 2: f"strength\t\t{self.strength:3d} -> {self.strength+1:3d}\tDeal damage when hit.", 
+                 3: f"focus\t\t{self.focus:3d} -> {self.focus+1:3d}\tChance of critical damage if hit.", 
+                 4: f"speed\t\t{self.speed:3d} -> {self.speed+1:3d}\tChance to hit and initiative per turn.", 
+                 5: f"maxlife\t\t{self.maxlife:3d} -> {self.maxlife+10:3d}\tMaximum life."}
         while credit > 0:
             if randomize:
                 action = random.randint(1, 5)

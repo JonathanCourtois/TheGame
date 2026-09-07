@@ -238,15 +238,12 @@ class Character(Entity):
         # load the existing characters
         with open("save/characters.pkl", "rb") as f:
             characters = pkl.load(f)
-            dprint(f"{characters}")
 
         # check if the character already exists by UID
         if self.uid < 1 and len(characters) < 10: # new character not loaded, it's a new one
-            dprint(f"debug : {list(characters.keys())} - {1 in characters.keys()=}")
             for i in range(1, 11):
                 if i not in characters.keys():
                     self.uid = i
-                    dprint(f"choosen UID {i}")
                     break
             # Update local save
             
@@ -274,8 +271,6 @@ class Character(Entity):
                 print("Character not saved.")
         
         with open("save/characters.pkl", "wb") as f:
-            dprint(f"NEW SAVE")
-            dprint(f"{characters}")
             pkl.dump(characters, f) # Update save file
         return
                 
