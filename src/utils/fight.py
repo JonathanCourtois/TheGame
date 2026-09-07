@@ -37,10 +37,12 @@ def fight(fighters_list:list):
             fighter[1] += fighter[0].speed
             if fighter[1] >= max_speed:
                 fighter[1] -= max_speed
-                if fighter[3]:
+
+                if fighter[3]:      # open inventory
                     fighter[0].manage_inventory()
                     fighter[3] = False
-                elif fighter[2]:
+
+                elif fighter[2]:    # try to flee
                     print(f"{fighter[0].displayed_name()} tried to flee!")
                     # to flee, the character must succeed a d'speed' roll facing the monster's d'speed' roll
                     flee_roll    = fighter[0].roll_d(fighter[0].speed)
@@ -50,9 +52,11 @@ def fight(fighters_list:list):
                         return
                     else:
                         print(f"{fighter[0].displayed_name()} failed to flee!")
-                else:
+
+                else:               # fight
                     hit, damage, combat_log = fighter[0].attack()
                     combat_log = fighters[1-i][0].defend(hit, damage, combat_log)
+
 
                 if isinstance(fighter[0], Character):
                     if not(combat_log == "" or combat_log == "\n"):
@@ -77,7 +81,7 @@ def fight(fighters_list:list):
                 else:
                     fighter[3] = False
                     fighter[2] = False
-                print(f"debbug action {action}")
+                    
                 if fighters[1-i][0].life <= 0:
                     break
 

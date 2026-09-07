@@ -3,10 +3,9 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
-import math
 import re
 from src.Utils.random_generator import random_rarity, Rarity
-from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint
+from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint, strip_ansi, center_ansi, fside
 
 class Entity:
     def __init__(self):
@@ -103,8 +102,8 @@ class Entity:
         sheet += f"{eq_h}#\n"
         sheet = f"{sheet}# CR {'-'*(st+10)} :{self.cr:^{vp}d}"
         if equipment:
-            eq_h = f"#{' ':{cp}s}⌊{self._center_ansi(self.get_equipment_name('head'),ep)}⌋{' ':{cp}s}"
-            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('neck'),ep)}⌋ "
+            eq_h = f"#{' ':{cp}s}⌊{center_ansi(self.get_equipment_name('head'),ep)}⌋{' ':{cp}s}"
+            eq_h += f"⌊{center_ansi(self.get_equipment_name('neck'),ep)}⌋ "
         sheet += f"{eq_h}#\n"
 
         sheet = f"{sheet}# Life {'-'*(st+8)} :{ctxt(f'{self.life:>{int(vp/2)}d}',Colors.GREEN)}/{ctxt(f'{self.maxlife:<{int(vp/2)}d}',Colors.GREEN)}"
@@ -117,10 +116,10 @@ class Entity:
 
         sheet += f"# Constitution {'-'*(st)} :{self.constitution:^{vp}d}"
         if equipment:
-            eq_h = f"# ⌊{self._center_ansi(self.get_equipment_name('left hand'),ep)}⌋"
-            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('body'),ep)}⌋"
-            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('right hand'),ep)}⌋ "
-            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('belt'),ep)}⌋ "
+            eq_h = f"# ⌊{center_ansi(self.get_equipment_name('left hand'),ep)}⌋"
+            eq_h += f"⌊{center_ansi(self.get_equipment_name('body'),ep)}⌋"
+            eq_h += f"⌊{center_ansi(self.get_equipment_name('right hand'),ep)}⌋ "
+            eq_h += f"⌊{center_ansi(self.get_equipment_name('belt'),ep)}⌋ "
         sheet += f"{eq_h}#\n"
 
         sheet += f"# Speed {'-'*(st+7)} :{self.speed:^{vp}d}"
@@ -131,8 +130,8 @@ class Entity:
 
         sheet += f"# Strength {'-'*(st+4)} :{self.strength:^{vp}d}"
         if equipment:
-            eq_h = f"#{' ':{cp}s}⌊{self._center_ansi(self.get_equipment_name('legs'),ep)}⌋{' ':{cp}s}"
-            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('ring1'),ep)}⌋ "
+            eq_h = f"#{' ':{cp}s}⌊{center_ansi(self.get_equipment_name('legs'),ep)}⌋{' ':{cp}s}"
+            eq_h += f"⌊{center_ansi(self.get_equipment_name('ring1'),ep)}⌋ "
         sheet += f"{eq_h}#\n"
 
         sheet += f"# Focus {'-'*(st+7)} :{self.focus:^{vp}d}"
@@ -143,8 +142,8 @@ class Entity:
 
         sheet += f"# Gold {'-'*(st+8)} :{ctxt(f'{self.gold:^{vp}d}',Colors.YELLOW)}"
         if equipment:
-            eq_h = f"#{' ':{cp}s}⌊{self._center_ansi(self.get_equipment_name('feet'),ep)}⌋{' ':{cp}s}"
-            eq_h += f"⌊{self._center_ansi(self.get_equipment_name('ring2'),ep)}⌋ "
+            eq_h = f"#{' ':{cp}s}⌊{center_ansi(self.get_equipment_name('feet'),ep)}⌋{' ':{cp}s}"
+            eq_h += f"⌊{center_ansi(self.get_equipment_name('ring2'),ep)}⌋ "
         sheet += f"{eq_h}#\n"
 
         if xp:
@@ -162,7 +161,7 @@ class Entity:
             for i in range(2):
                 for j in range(2):
                     name = self.get_inventory_item_name(list_idx)
-                    inventory += f"# [{self._center_ansi(name, ip)}] #"
+                    inventory += f"# [{center_ansi(name, ip)}] #"
                     list_idx += 1
                     if j == 0:
                         inventory += " "
@@ -189,33 +188,12 @@ class Entity:
         """
         return color_text_from_rarity(f'{self.name}', self.rarity)
 
-    def _strip_ansi(self, s: str) -> str:
-        """Return the string with ANSI escape sequences removed (for width calculation)."""
-        return re.sub(r'\x1b\[[0-9;]*m', '', s)
-
-    def _center_ansi(self, s: str, width: int) -> str:
-        """
-        Center a possibly-colored string according to its visible length.
-        Preserves ANSI escapes.
-        """
-        visible = self._strip_ansi(s)
-        if len(visible) >= width:
-            if len(visible) > width:
-                parts = re.split(visible, s)
-                s = parts[0] + visible[:width] + parts[1]
-            return s
-
-        pad_total = width - len(visible)
-        left = pad_total // 2
-        right = pad_total - left
-        return ' ' * left + s + ' ' * right
-
     def roll_d(self, sides):
         """
-        Roll a dice with a given number of sides.
+        Roll a dice with a given number of sides [1, sides].
         Returns the result of the roll.
         """
-        return random.randint(0, sides)
+        return random.randint(1, sides)
 
     def roll_n_d(self, n, sides):
         """
@@ -224,46 +202,56 @@ class Entity:
         """
         return sum(self.roll_d(sides) for _ in range(n))
 
-    def attack(self):
+    def attack(self, combat_log: str = "", log_side: str = 'None'):
         """
-        Simulate an attack.
+        Roll attack stats.
         Returns a tuple of hit and damage.
         """
-        combat_log  = ""
         hit         = self.roll_d(self.speed)
         crit        = True if self.roll_d(100) <= self.focus else False
         damage      = 0
         if hit > 0:
+            damage  = self.roll_d(self.strength)
             if crit:
-                damage  = self.roll_n_d(2, self.strength)+2
-                combat_log += f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to {ctxt('Crit Hit!',Colors.RED)} for {ctxt(f'{damage:3d}',Colors.RED)} Damage !\n"
+                damage  += self.roll_d(self.strength)
+                crit_log = f"{ctxt('CRIT Hit!',Colors.RED)}"
             else:
-                damage  = self.roll_d(self.strength-1)+1
-                combat_log += f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to Hit for {ctxt(f'{damage:3d}',Colors.RED)} Damage !\n"
+                crit_log = f"{ctxt('Hit.',Colors.RED)}"
+                
+            # combat_log += f"{self.displayed_name()} made {ctxt(f'{hit:3d}',Colors.RED)} to {damage_log}" 
+            formated_log = f"Made {ctxt(f'{hit:3d}',Colors.RED)} to {crit_log}"
+
+            combat_log += fside(formated_log, side=log_side)+"\n"
+
         return hit, damage, combat_log
     
-    def defend(self, hit, damage, combat_log=""):
+    def defend(self, hit, damage, combat_log="", log_side: str = 'None'):
         """
-        Simulate defending against an attack.
+        Roll the defence against an attack.
         If the hit is greater than the CA, reduce life by damage.
         """
         const_check = self.roll_d(self.constitution)
         combat_log  = combat_log
+        damage_log  = ""
+        life_log    = ""
         
         if hit == 0:
             # combat_log  = ""
             return combat_log
         
-        elif hit > const_check:
-            self.life -= damage
-            combat_log += f"{self.displayed_name()} takes {ctxt(f'{damage:2d}',Colors.RED)} damage!\n"
-            combat_log += self.life_status()
+        elif hit >= const_check:
+            self.life   -= damage
+            damage_log  = f"takes {ctxt(f'{damage:2d}',Colors.RED)} damage!"
+            life_log    = self.life_status()
 
         # proba_display = random.random()
         if hit < const_check/2 : # and proba_display < 0.5:
-            combat_log += f"{self.displayed_name()} dodges the attack!\n"
-        elif hit <= const_check : # proba_display < 0.5:
-            combat_log += f"{self.displayed_name()} blocks the attack!\n"
+            damage_log = f"dodges the attack!"
+        elif hit < const_check : # proba_display < 0.5:
+            damage_log = f"blocks the attack!"
+        
+        combat_log += f"{fside(damage_log, side=log_side)}\n"
+        combat_log += f"{fside(life_log, side=log_side)}\n"
         # else:
         #     combat_log  = ""
         
@@ -280,22 +268,22 @@ class Entity:
         else:
             return Colors.GREEN
 
-    def life_status(self, add_name=True):
+    def life_status(self, add_name=False):
         """
         Returns a sentence relating the life status of the entity.
         """
         if add_name:
-            name = self.displayed_name()
+            name = f"{self.displayed_name()} "
         else:
             name = ""
         if self.life <= 0:
-            return f"{name} is dead!\n"
+            return f"{name}is dead!"
         elif self.life < self.maxlife*0.2:
-            return f"{name} looks really bad!\n"
+            return f"{name}looks really bad!"
         elif self.life < self.maxlife*0.5:
-            return f"{name} looks wounded!\n"
+            return f"{name}looks wounded!"
         else:
-            return f"{name} looks to handle it!\n"
+            return f"{name}looks to handle it!"
 
     def heal(self, amount):
         """
@@ -305,7 +293,7 @@ class Entity:
         self.life += amount
         if self.life > self.maxlife:
             self.life = self.maxlife
-        print(f"{self.displayed_name()} heals and{self.life_status(add_name=False)}")
+        print(f"{self.displayed_name()} heals and{self.life_status()}")
 
     def rename(self, name):
         """

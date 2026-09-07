@@ -4,7 +4,7 @@ import os
 import random
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from src.Utils.random_generator import random_rarity, Rarity
-from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint
+from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint, fside
 from src.Object.entity import Entity
 from src.Object.item import Item
 from src.Object.equipment import Equipment
@@ -173,6 +173,30 @@ class Character(Entity):
         else:
             print("Item not found in inventory!\n")
 
+    def attack(self):
+        """
+        Roll attack stats.
+        Returns a tuple of hit and damage.
+        """
+        life_bar = f" {'<3'*int((self.life*(80-len(self.name))/self.maxlife)/2)}"
+        c_life_bar = ctxt(life_bar, self.life_color())
+
+        combat_log = f"{fside(self.displayed_name()+c_life_bar, side='left')}\n"
+
+        return super().attack(combat_log=combat_log, log_side='left')
+
+    def defend(self, hit, damage, combat_log="", log_side: str = 'None'):
+        """
+        Roll the defence against an attack.
+        If the hit is greater than the CA, reduce life by damage.
+        """
+        life_bar = f" {'<3'*int((self.life*(80-len(self.name))/self.maxlife)/2)}"
+        c_life_bar = ctxt(life_bar, self.life_color())
+
+        combat_log += f"{fside(self.displayed_name()+c_life_bar, side='left')}\n"
+        
+        return  super().defend(hit, damage, combat_log=combat_log, log_side='left')
+    
     def displayed_name(self):
         """
         Returns the name of the character.

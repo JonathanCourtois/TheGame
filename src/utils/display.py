@@ -3,6 +3,7 @@ import sys
 import select
 import os
 import time
+import re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import src.Utils.random_generator as randgen
 
@@ -88,3 +89,39 @@ def timed_input(prompt, timeout=1):
         if time.time() - start_time > timeout:
             # print()  # Move to next line
             return None
+
+def strip_ansi(s: str) -> str:
+    """Return the string with ANSI escape sequences removed (for width calculation)."""
+    return re.sub(r'\x1b\[[0-9;]*m', '', s)
+
+def center_ansi(s: str, width: int) -> str:
+    """
+    Center a possibly-colored string according to its visible length.
+    Preserves ANSI escapes.
+    """
+    visible = strip_ansi(s)
+    if len(visible) >= width:
+        if len(visible) > width:
+            parts = re.split(visible, s)
+            s = parts[0] + visible[:width] + parts[1]
+        return s
+
+    pad_total = width - len(visible)
+    left = pad_total // 2
+    right = pad_total - left
+    return ' ' * left + s + ' ' * right
+    
+def fside(text, side:str='right', width:int=80):
+    """
+    format a string of 'width' character push the visible text to the 'side'
+    """
+    visible = strip_ansi(text)
+
+    if side == 'right':
+        ftext = "{0:>{1}}".format(text, width+len(text)-len(visible))
+    elif side == 'left':
+        ftext = "{0:<{1}}".format(text, width)
+    else :
+        ftext = "{0:^{1}}".format(text, width+len(text)-len(visible))
+
+    return ftext

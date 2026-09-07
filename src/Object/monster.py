@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from src.Utils.random_generator import random_rarity, Rarity
 import random
-from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint
+from src.Utils.display import color_from_rarity, color_text_from_rarity, ctxt, Colors, dprint, fside
 from src.Object.entity import Entity
 import pickle as pkl
 
@@ -38,6 +38,30 @@ class Monster(Entity):
         Returns the name of the character.
         """
         return color_text_from_rarity(self.name, self.rarity)
+    
+    def attack(self):
+        """
+        Roll attack stats.
+        Returns a tuple of hit and damage.
+        """
+        life_bar = f"{'\u0190>'*int((self.life*(80-len(self.name))/self.maxlife)/2)} "
+        c_life_bar = ctxt(life_bar, self.life_color())
+
+        combat_log  = f"{fside(c_life_bar+self.displayed_name(), side='right')}\n"
+
+        return super().attack(combat_log=combat_log, log_side='right')
+
+    def defend(self, hit, damage, combat_log="", log_side: str = 'None'):
+        """
+        Roll the defence against an attack.
+        If the hit is greater than the CA, reduce life by damage.
+        """
+        life_bar = f"{'\u0190>'*int((self.life*(80-len(self.name))/self.maxlife)/2)} "
+        c_life_bar = ctxt(life_bar, self.life_color()) 
+        
+        combat_log += f"{fside(c_life_bar+self.displayed_name(), side='right')}\n"
+        
+        return  super().defend(hit, damage, combat_log=combat_log, log_side='right')
     
     def generate(self, level=None, rarity=None, name="Monster"):
         self.__init__()
