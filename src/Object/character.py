@@ -203,7 +203,7 @@ class Character(Entity):
         """
         return color_text_from_rarity(self.name, self.rarity)
     
-    def life_status(self, add_name=True):
+    def life_status(self, add_name=False):
         """
         Returns a sentence relating the life status of the entity.
         """
@@ -238,6 +238,7 @@ class Character(Entity):
         # load the existing characters
         with open("save/characters.pkl", "rb") as f:
             characters = pkl.load(f)
+            dprint(f"{characters}")
 
         # check if the character already exists by UID
         if self.uid < 1 and len(characters) < 10: # new character not loaded, it's a new one
@@ -253,10 +254,11 @@ class Character(Entity):
             characters[self.uid] = self
 
         elif self.uid < 1 and len(characters) >= 10: # new character not loaded and save slot full
-            action = input("Save slot are full. Do you want to delete an other character ? (y/n)")
+            action = input("Save slot are full. Do you want to delete an other character ? (y/n) ")
             if action.lower() == 'y': 
                 self.manage_save(delete_mode=True)
                 self.save()
+                return
             else:
                 print("Character not saved.")
 
@@ -272,6 +274,8 @@ class Character(Entity):
                 print("Character not saved.")
         
         with open("save/characters.pkl", "wb") as f:
+            dprint(f"NEW SAVE")
+            dprint(f"{characters}")
             pkl.dump(characters, f) # Update save file
         return
                 
