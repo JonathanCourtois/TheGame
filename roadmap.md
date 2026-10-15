@@ -54,7 +54,6 @@
 
 | Task | Status |
 | --- | --- |
-
 | Add Rich lib for consol UI | [ ] |
 https://rich.readthedocs.io/en/latest/introduction.html
 
