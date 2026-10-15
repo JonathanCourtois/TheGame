@@ -49,6 +49,15 @@
 | Monster can drop equipment and item if dead | [ ] |
 | Define run progression: enemy scaling, item quality, merchant availability | [X] |
 
+## Phase 3.5: UI augment
+--------------------------------------------
+
+| Task | Status |
+| --- | --- |
+
+| Add Rich lib for consol UI | [ ] |
+https://rich.readthedocs.io/en/latest/introduction.html
+
 ## Phase 4: Expand content and world interactions (priority 4)
 --------------------------------------------
 
